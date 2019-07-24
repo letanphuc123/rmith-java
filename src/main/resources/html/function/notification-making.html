@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{layout}">
+    <head>
+        <title>Notification Making | Local Search</title>
+        <th:block layout:fragment="css">
+            <link rel="stylesheet" th:href="@{/static/plugins/summernote/summernote.css}"  type="text/css"/>
+            <link rel="stylesheet" th:href="@{/static/plugins/fSelect/fSelect.css}" type="text/css"/>
+            <link rel="stylesheet" th:href="@{/static/css/pages/notification.css}"  type="text/css"/>
+        </th:block>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div th:if="${notification!=null}" style='display: none'>
+                <th:block th:each="item : ${notification.groupIds}">
+                    <div class='checked-groupIds'  th:value="${item}" ></div>
+                </th:block>
+                <th:block th:each="item : ${notification.packageIds}">
+                    <div class='checked-packageIds'  th:value="${item}" ></div>
+                </th:block>
+            </div>
+            <div class="row bheading-title">
+                <!-- Breadcrumb -->
+                <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                    <ol class="breadcrumb">
+                        <li><a th:href="@{/dashboard}">[[${language.get('lb_dashboard')?:'Dashboard'}]]</a></li> 
+                        <li><a th:href="@{/notification-manager}">[[${language.get('lb_notification_manager')?:'Notification Manager'}]]</a></li> 
+                        <li class="active"><span>[[${language.get('lb_notification_making')?:'Notification Making'}]]</span></li> 
+                    </ol> 
+                </div>
+                <!-- /Breadcrumb -->
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 text-right">
+                    <h5 class="txt--dark">[[${language.get('lb_notification_making')?:'Notification Making'}]]</h5> 
+                </div>
+
+            </div>
+            <div class="row">
+                <div id="divBlockWaiting"></div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="w--800 ml--auto mr--auto bg--light pa--15">
+                        <form id='frmNotification' method="post" th:attr="action=@{/save-notification}">
+
+                            <div class="form-group">
+                                <label>[[${language.get('lb_subject')?:'Subject'}]]</label> 
+                                <input class="form-control" th:placeholder="${language.get('lb_enter_subject')?:'Enter subject'}" type="text" name="subject" autocomplete="off" th:value='${notification?.subject}' />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label mb--10">[[${language.get('lb_content_notification')?:'Content notification'}]]</label> 
+                                <textarea id="txtAContentNotification" name="notification" form='frmNotification'>[(${notification?.notification})]</textarea>
+                            </div>
+                            <div class="permistion--box">
+                                <blockquote><h6 class="txt--dark">[[${language.get('lb_permistion')?:'Permistion'}]]</h6></blockquote>
+                                <div class="form-group mb--0 row">
+                                    <div class="col-md-6 col-sm-6 col-xs-6">
+                                        <div class="radio-inline pl--0">
+                                            <span class="radio radio-info ma--0 mt--5">
+                                                <input type="radio" name="permission" id="radio2" value="package" checked=""/>
+                                                <label for="radio2">[[${language.get('lb_send_package')?:'Send Package'}]]</label> 
+                                            </span>
+                                        </div>
+                                        <div class="radio-inline">
+                                            <span class="radio radio-info ma--0 mt--5">
+                                                <input type="radio" name="permission" id="radio3" value="group"/>
+                                                <label for="radio3">[[${language.get('lb_send_group_user')?:'Send Group User'}]]</label> 
+                                            </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-6 col-sm-6 col-xs-6 multi-select-box">
+                                        <div id="select__package">
+
+                                            <select id="multiSelectPackage" multiple="multiple" onchange='removeSelectElement(this, "#previewPackage")'>
+                                                <th:block th:each="item : ${packageList}">
+                                                    <option th:value="${item.packageId}">[[${item.packageName}]]</option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+                                        <div id="select__groupuser" class="hidden">
+                                            <select id="multiSelectGroup" multiple="multiple" onchange='removeSelectElement(this, "#previewGroup")'>
+                                                <th:block th:each="item : ${groupUserList}">
+                                                    <option  th:value="${item.groupId}" >[[${item.groupName}]]</option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="box__package">
+                                    <div class="form-group mt--15 ">
+                                        <ul class="show-permistion row" id='previewPackage'>
+                                        </ul>
+                                    </div>
+                                    <div class="form-group text-right">
+                                        <button type="submit" class="btn btn--navyblue btn--xs">[[${language.get('lb_btn_save')?:'Save'}]]</button>
+                                    </div>
+                                </div>
+                                <div id="box__groupuser" class="hidden">
+                                    <div class="form-group mt--15 ">
+                                        <ul class="show-permistion row" id='previewGroup'>
+                                        </ul>
+                                    </div>
+                                    <div class="form-group text-right">
+                                        <button type="submit" class="btn btn--navyblue btn--xs">[[${language.get('lb_btn_save')?:'Save'}]]</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <input type="hidden" name="groupIds" id='groupList'/>
+                            <input type="hidden" name="packageIds" id='packageList'/>
+                            <input type="hidden" name="notificationId" th:value="${notificationId}"/>
+                        </form>
+                    </div>
+                </div>
+            </div> 
+
+        </div>
+    </body>
+    <th:block layout:fragment="scripts">
+        <script th:src="@{'/static/plugins/jquery.validate/localization/validate-' + ${session.language} + '.js'}" ></script>
+        <script th:src="@{/static/plugins/summernote/summernote.min.js}"></script>
+        <script th:src="@{/static/plugins/fSelect/fSelect.js}" type="text/javascript"></script>
+        <script>
+            $(document).ready(function () {
+                $('#txtAContentNotification').summernote({
+                    height: 300,
+                    toolbar: [
+                        ['style', ['style']],
+                        ['font', ['bold', 'italic', 'underline', 'superscript', 'subscript', 'strikethrough', 'clear']],
+                        ['fontname', ['fontname']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['help', ['help']]
+                    ]
+                });
+                $('#multiSelectPackage').fSelect();
+                $('#multiSelectGroup').fSelect();
+
+            });
+
+            $(".checked-packageIds").each(function (idx, elm) {
+                var val = $(elm).attr("value");
+                $("#multiSelectPackage option[value=" + val + "]").attr("selected", "selected");
+            });
+            $(".checked-groupIds").each(function (idx, elm) {
+                var val = $(elm).attr("value");
+                $("#multiSelectGroup option[value=" + val + "]").attr("selected", "selected");
+            });
+
+            $("#radio2").click(function () {
+                $("#select__package")[0].classList.remove('hidden');
+                $("#select__groupuser")[0].classList.add("hidden");
+                $("#box__package")[0].classList.remove('hidden');
+                $("#box__groupuser")[0].classList.add("hidden");
+
+            });
+            $("#radio3").click(function () {
+                $("#select__package")[0].classList.add("hidden");
+                $("#select__groupuser")[0].classList.remove('hidden');
+                $("#box__package")[0].classList.add('hidden');
+                $("#box__groupuser")[0].classList.remove("hidden");
+            });
+            var removeSelectElement = function (elm, id) {
+                var selectedOptions = elm.selectedOptions;
+                var html = '';
+                for (var i = 0; i < selectedOptions.length; i++) {
+                    html += '<li>- ' + escapeHtml(selectedOptions[i].text) + '<li>';
+                }
+                $(id).html(html);
+            };
+            $("form").submit(function () {
+                if ($("[name=permission]:checked").val() === "package") {
+                    $("#packageList").val($("#multiSelectPackage").val());
+                } else {
+                    $("#groupList").val($("#multiSelectGroup").val());
+                }
+                return true;
+            });
+
+            $("#frmNotification").validate({
+                errorElement: 'span', //default input error message container
+                errorClass: 'txt--error font--12 mt--5', // default input error message class
+                focusInvalid: false, // do not focus the last invalid input
+                rules: {
+                    "subject": {
+                        required: true
+                    }
+                },
+                highlight: function (element) { // hightlight error inputs
+                    $(element).closest('.form-group').addClass('has--error'); // set error class to the control group
+                },
+                unhighlight: function (element) { // revert the change done by hightlight
+                    $(element).closest('.form-group').removeClass('has--error'); // set error class to the control group
+                },
+                success: function (label) {
+                    label.closest('.form-group').removeClass('has--error'); // set success class to the control group
+                },
+                submitHandler: function () {
+                    showWait("#divBlockWaiting");
+                    return true;
+                }
+            });
+        </script>
+        <th:block th:if="${ (notification)!=null && notification.permission=='group'}">
+            <script>
+                $("#radio3").trigger("click");
+            </script>
+        </th:block>
+    </th:block>
+
+</html>
+

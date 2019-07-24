@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<!-- Author : Nguyen Thanh Huy -->
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{layout}">
+    <head>
+        <title>Detail Log | Local Search</title>
+        <th:block layout:fragment="css">
+            <link th:href="@{/static/plugins/data-table/jquery.dataTables.min.css}" href="" rel="stylesheet" type="text/css" />
+            <link th:href="@{/static/plugins/sweet-alert/sweetalert.css}" href="" rel="stylesheet" type="text/css" />
+        </th:block>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <input type="hidden" id="txtContextPath" th:value="@{/}" />
+            <div class="row bheading-title">
+                <!-- Breadcrumb -->
+                <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                    <ol class="breadcrumb">
+                        <li><a th:href="@{/dashboard}" th:text="${language.get('lb_dashboard')?:'Dashboard'}"></a></li>
+                        <li><a th:href="@{/logs}" th:text="${language.get('lb_breadcrumb_logs')?:'Logs'}"></a></li>
+                        <li class="active">
+                            <span th:text="${language.get('lb_breadcrumb_detail_log')?:'Detail Log'}"></span>
+                        </li>
+                    </ol>
+                </div>
+                <!-- /Breadcrumb -->
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 text-right">
+                    <h5 class="txt-dark" th:text="${language.get('lb_detail_log_page')?:'Detail Log'}"></h5>
+                </div>
+            </div>
+
+            <div class="row mt-10">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pl--5 pr--5">
+                    <blockquote class="bg--light">
+                        <h6 class="panel-title" th:utext="${(language.get('lb_show_100_lines_log')?:'List shows top 100 lines in file log')}"></h6>
+                        <p>- <span th:utext="${(language.get('lb_you_can_click')?:'You can click')}"></span>
+                            <a class="btn btn__table btn--navyblue text-inverse" th:href="@{'/download-file-log?filePath=' + ${filePath}}">
+                                <i class="fa fa-download"></i>
+                            </a> 
+                            <span th:utext="${language.get('lb_see_all_content_log')?:'To see all content of file log!'}"></span>
+                        </p>
+                    </blockquote>
+                </div>
+            </div>
+            <div class="row mt-10">
+                <div id="divBlockDetailLogWaiting"></div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="panel panel-default border-panel card-view">
+                        <div class="panel-wrapper collapse in">
+                            <div class="panel-body">
+                                <div class="table-wrap">
+                                    <th:block th:if="${(detailLogDTOList != null and #lists.size(detailLogDTOList) != 0)}">
+                                        <div id="divDetailLogWaiting">
+                                            <div class="loading-page loading-box">
+                                                <div class="loading-center--absolute">
+                                                    <div class="object object--one"></div>
+                                                    <div class="object object--two"></div>
+                                                    <div class="object object--three"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <table id="tblDetailLog" class="table table-hover table-bordered display font--14" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th th:text="${language.get('lb_table_date_modify')?:'Date Modify'}"></th>
+                                                    <th th:text="${language.get('lb_table_function')?:'Function'}"></th>
+                                                    <th th:text="${language.get('lb_table_line')?:'Line'}"></th>
+                                                    <th th:text="${language.get('lb_table_message')?:'Message'}"></th>
+                                                    <th th:text="${language.get('lb_table_action')?:'Action'}"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="item : ${detailLogDTOList}">
+                                                    <td th:text="${item.dateModify}"></td>
+                                                    <td th:text="${item.function}"></td>
+                                                    <td th:text="${item.line}"></td>
+                                                    <td class="tbl-truncate">
+                                                        <div class="row--truncate" th:text="${item.message}"></div>
+                                                    </td>
+                                                    <td>
+                                                        <a class="btn btn__table btn--navyblue text-inverse btnDetailLog" data-toggle="modal" 
+                                                           data-target="#mdMessageLog" data-placement="left" data-tooltip="tooltip"
+                                                           th:attr="data-original-title=${language.get('lb_detail')?:'Detail Log'},data-message=${item.message}">
+                                                            <i class="fa fa-eye"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </th:block>
+                                    <th:block th:unless="${(detailLogDTOList != null and #lists.size(detailLogDTOList) != 0)}">
+                                        <!-- Show no data -->
+                                        <div class="no-data text-center">
+                                            <img th:src="@{/static/img/no-data.svg}" />
+                                            <span class="text-center nonecase-font block error-comment" th:text="${language.get('lb_no_data')?:'No data'}"></span>
+                                            <p class="text-center mb--10" th:text="${language.get('lb_empty')?:'List log is empty.'}"></p>
+                                        </div>
+                                        <!--End No data-->
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Detail Message Log -->
+            <div id="mdMessageLog" class="modal fade modal-center" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h5 class="modal-title" id="myModalLabel" th:text="${language.get('lb_popup_detail_message_log')?:'Detail Message Log'}"></h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="modal-scroll">
+                                <blockquote><p id="txtMessageLog" class="txt--breakword"></p></blockquote>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn--navyblue btn--xs" data-dismiss="modal" th:text="${language.get('lb_button_close')?:'Close'}"></button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+            <input type="hidden" id="txtSessionLanguage" th:value="${session.language}" />
+        </div>
+        <th:block layout:fragment="scripts">
+            <script th:src="@{/static/plugins/data-table/jquery.dataTables.min.js}" type="text/javascript"></script>
+            <script th:src="@{/static/plugins/sweet-alert/sweetalert.min.js}" type="text/javascript"></script>
+            <script th:src="@{/static/js/custom.js}" type="text/javascript"></script>
+            <script th:src="@{/static/js/detail-log.js}" type="text/javascript"></script>
+        </th:block>
+    </body>
+
+</html>

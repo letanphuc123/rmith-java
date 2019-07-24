@@ -1,0 +1,53 @@
+/* 
+    Created on : Jul 9, 2019, 4:15:47 PM
+    Author     : Nguyen Thanh Huy
+*/
+/*=============================================
+=            LOGS CSS           =
+=============================================*/
+.logs-select {
+    border: 1px solid rgba(33, 33, 33, 0.12);
+    border-radius: 0;
+    background-color: #fff;
+    box-shadow: none;
+    color: #272B34;
+    height: 34px;
+    width: 400px;
+    line-height: 34px;
+    padding-left: 13px;
+    position: relative;
+}
+
+.logs-select .dropdown-menu {
+    width: 100%;
+}
+.logs-select a {
+    display: block;
+    cursor: pointer;
+}
+.logs-select .fa-caret-down {
+    position: absolute;
+    top:5px;
+    right: -15px;
+}
+
+.logs-select{
+    height: 30px;
+    line-height: 30px;
+    padding-right: 20px;
+}
+.title-log{
+    position: absolute;
+    font-size: 12px;
+    font-style: italic;
+    color: #afafaf;
+    left: 1px;
+    top:1px;
+    z-index: 10;
+    height: 28px;
+    line-height: 28px;
+    background: #fafafa;
+    padding:0 10px;
+    border-right: 1px solid #ddd;
+}
+

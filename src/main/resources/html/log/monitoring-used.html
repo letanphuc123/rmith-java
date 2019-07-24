@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{layout}">
+    <head>
+        <title> Monitor Used | Local Search </title>
+        <th:block layout:fragment="css">
+            <link rel="stylesheet" th:href="@{/static/plugins/datetimepicker/css/daterangeschau.css}" type="text/css"/>
+            <link rel="stylesheet" th:href="@{/static/plugins/single-datetimepicker/jquery.datetimepicker.css}"  type="text/css"/>
+            <link rel="stylesheet" th:href="@{/static/plugins/data-table/jquery.dataTables.min.css}"  type="text/css"/>
+        </th:block>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <!-- Component page -->
+            <div class="row bheading-title">
+                <!-- Breadcrumb -->
+                <div class="col-lg-9 col-sm-8 col-xs-12">
+                    <ol class="breadcrumb">
+                        <li><a th:href="@{/dashboard}" th:text="${language.get('lb_dashboard')?:'Dashboard'}"></a></li> 
+                        <li class="active"><span th:text="${language.get('lb_monitoring_used')?:'Monitoring Used'}"></span></li> 
+                    </ol>
+                </div>
+                <!-- /Breadcrumb -->
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 text-right">
+                    <h5 class="txt--dark" th:text="${language.get('lb_list_monitoring_used')?:'List Monitoring Used'}"></h5> 
+                </div>
+            </div>
+
+            <!-- List log monitoring of all accounts -->
+            <input type="hidden" id="txtContextPath" th:value="@{/}"/>
+            <input type="hidden" id="txtToken" th:value="${_csrf.token}"/>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="panel panel-default card-view">
+                        <div class="panel-heading pb--0">
+                            <div class="pull-right">
+                                <div id="daterangeschau" class="btn-group"></div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-wrapper collapse in">
+                            <div class="panel-body">
+                                <div class="table-wrap">
+                                    <th:block th:if="${monitoringUsedDTOList != null && (#lists.size(monitoringUsedDTOList) > 0) }">
+                                        <div id="divMonitoringWaiting">
+                                            <div class="loading-page loading-box">
+                                                <div class="loading-center--absolute">
+                                                    <div class="object object--one"></div>
+                                                    <div class="object object--two"></div>
+                                                    <div class="object object--three"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <table id="tblMonitoringUsed" class="table table-hover table-bordered display font--14" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th th:text="${language.get('lb_client')?:'Client'}"></th>
+                                                    <th th:text="${language.get('lb_account_name')?:'Account Name'}"></th>
+                                                    <th th:text="${language.get('lb_page_access')?:'Page Access'}"></th>
+                                                    <th th:text="${language.get('lb_action')?:'Action'}"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="item:${monitoringUsedDTOList}">
+                                                    <td th:text="${item.email}"></td>
+                                                    <td th:text="${item.fullName}"></td>
+                                                    <td th:utext="${#strings.replace(item.pageLog,'\n','<br/>')} "></td>
+                                                    <td>
+                                                        <a class="btn btn__table btn--warning btnInfoLog" href="javascript:void(0);" data-placement="left" data-tooltip="tooltip" 
+                                                           th:attr="data-original-title=${language.get('lb_action_detail')?:'Detail'}, data-email=${item.email}, data-account-id=${item.accountId}">
+                                                            <i class="fa fa-info"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </th:block>
+                                    <th:block th:unless="${monitoringUsedDTOList != null && (#lists.size(monitoringUsedDTOList) > 0) }">
+                                        <!-- Show no data -->
+                                        <div class="no-data text-center">
+                                            <img th:src="@{/static/img/no-data.svg}"/>
+                                            <span class="text-center nonecase-font block error-comment" th:text="${language.get('lb_no_data')?:'No data'}"></span> 
+                                            <p class="text-center mb--10" th:text="${language.get('lb_no_user_access')?:'No user access system.'}"></p>
+                                        </div>
+                                        <!--End No data-->
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form id="frmFilterMonitoringUsed" th:attr="action=@{/set-cookie-date}" method="POST">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="hidden" id="txtDateRange" name="dateRange"/>
+                <input type="hidden" name="redirectPage" value="monitor-used"/>
+            </form>
+
+            <!-- List minitoring log by account -->
+            <div class="row mt-10 hide" id="divMonitoringByAccount" >
+                <div id="divBlockMonitoringByAccountWaiting"></div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="panel panel-default border-panel card-view">
+                        <div class="panel-heading">
+                            <div class="pull-left">
+                                <h6 class="panel-title txt-dark" th:text="${language.get('lb_list_monitoring_log_user_access')?:'List monitoring log user access'}"></h6>
+                                <p class="txt-dark"> <span th:text="${language.get('lb_current_client')?:'Current Client'}"></span> : <b><label id="lblClient"></label></b></p>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-wrapper collapse in">
+                            <div class="panel-body">
+                                <div id="divMonitoringByAccountWaiting"></div>
+                                <div class="table-wrap" id="divGridMonitoringByAccount"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <input type="hidden" id="txtInitLanguage" th:value="${ (initLanguage!=null) ? initLanguage : ''}"/>
+            <input type="hidden" id="txtSessionLanguage" th:value="${session.language}"/>
+        </div>
+        <th:block layout:fragment="scripts">
+            <!--Datetimepicker-->
+            <script th:src="@{/static/plugins/datetimepicker/js/moment.js}" type="text/javascript"></script>
+            <script th:src="@{/static/plugins/datetimepicker/js/datepicker.js}" type="text/javascript"></script>
+            <script th:src="@{/static/plugins/datetimepicker/js/dateformat.js}" type="text/javascript"></script>
+            <script th:src="@{/static/plugins/datetimepicker/js/daterangeschau.js}" type="text/javascript"></script>
+            <!--DataTable-->
+            <script th:src="@{/static/plugins/data-table/jquery.dataTables.min.js}"></script>
+            <!--Js page--> 
+            <script th:src="@{/static/js/monitoring-used.js}" type="text/javascript"></script>
+        </th:block>
+    </body>
+</html>

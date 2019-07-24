@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <link rel="stylesheet" href="css/font-awesome.css" />
+        <link rel="stylesheet" href="css/daterangeschau.css" />
+
+        <script src="js/jquery.min.js"></script>
+
+
+    </head>
+    <body>
+        <div class="container">
+            <div class="pull-right marT15">
+                <div id="daterangeschau"></div>
+                <!--<button id="btn_getvalue">Get Value</button>
+    <span id="myvalue"></span>-->
+                <!-- <button onclick="loadMe();">Load Me</button>-->
+            </div>
+            <div>
+
+            </div>
+        </div>
+        <script type="text/javascript" src="js/moment.js"></script>
+        <script type="text/javascript" src="js/datepicker.js"></script>
+        <script type="text/javascript" src="js/dateformat.js"></script>
+        <script type="text/javascript" src="js/daterangeschau.js"></script>
+
+        <script type="text/javascript">
+                    $(document).ready(function () {
+                        $('#daterangeschau').DateRangesChau({
+                            aggregations: ['-'],
+                            values: {
+                                mode: 'tworanges',
+                                calendars: 4,
+                                dr1from: moment().subtract('days', 31),
+                                dr1to: moment().subtract('days', 1),
+                                dr2from: moment().subtract('days', 62),
+                                dr2to: moment().subtract('days', 32),
+                                daterangePreset: "custom",
+                                comparisonEnabled: false,
+                                removeComparison: false,
+                                comparisonPreset: "previousperiod",
+                                maxDate: 1,
+                                minDate: 0,
+                                dateFormat: "yyyy/MM/dd"
+                            }
+                        });
+                        $('#btn_getvalue').click(function () {
+                            var daterange = $.parseJSON($("#date_chau_value").val());
+                            $("#myvalue").text(daterange.comparison + " - " + daterange.dr1from + " - " + daterange.dr1to + " - " + daterange.dr2from + " - " + daterange.dr2to);
+                        });
+                        $('tr td:first-child.datepickerSelected').each(function () {
+                            console.log($(this).text());
+                        });
+                        $('tr td:last-child.datepickerSelected').each(function () {
+                            console.log($(this).text());
+                        });
+                    });
+
+                    var loadMe = function () {
+                        $('#daterangeschau').DateRangesChau({
+                            aggregations: ['-'],
+                            values: {
+                                mode: 'tworanges',
+                                calendars: 4,
+                                dr1from: moment().subtract('days', 12),
+                                dr1to: moment().subtract('days', 1),
+                                dr2from: moment().subtract('days', 24),
+                                dr2to: moment().subtract('days', 12),
+                                daterangePreset: "custom",
+                                comparisonEnabled: false,
+                                removeComparison: true,
+                                comparisonPreset: "previousperiod",
+                                maxDate: 1,
+                                minDate: 0,
+                                dateFormat: "yyyy/MM/dd"
+                            }
+                        });
+                    };
+        </script>
+    </body>	
+</html>

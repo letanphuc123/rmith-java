@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{layout}">
+    <head>
+        <title>Google Place Type | Local Search</title>
+        <th:block layout:fragment="css">
+            <link rel="stylesheet" th:href="@{/static/plugins/sweet-alert/sweetalert.css}"  type="text/css"/>
+            <link rel="stylesheet" th:href="@{/static/plugins/data-table/jquery.dataTables.min.css}" type="text/css"/>
+        </th:block>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="row bheading-title">
+                <!-- Breadcrumb -->
+                <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                    <ol class="breadcrumb">
+                        <li><a th:href="@{/dashboard}" th:text="${language.get('lb_dashboard')?:'Dashboard'}"></a></li>
+                        <li class="active"><span th:text="${language.get('lb_breadcrumb_gg_place_type')?:'Google Place Type'}"></span></li>
+                    </ol>
+                </div>
+                <!-- /Breadcrumb -->
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 text-right">
+                    <h5 class="txt--dark" th:text="${language.get('lb_gg_place_type_page')?:'Google Place Type'}"></h5>
+                </div>
+            </div>
+            <div class="row mt-10">
+                <div id="block_loadding"></div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div id="showWaitGooglePlaceType"></div>
+                    <div class="panel panel-default border-panel card-view">
+                        <div class="panel-heading">
+                            <div class="pull-right">
+                                <button th:onclick="showAddPopup()" class="btn btn--navyblue btn--xs" th:text="${language.get('lb_button_add')?:'Add Type'}"></button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-wrapper collapse in">
+                            <div class="panel-body">
+                                <div class="table-wrap">
+                                    <th:block th:if="${#lists.size(googlePlaceTypeList)== 0}" >
+                                        <!--Show no data--> 
+                                        <div class="no-data text-center">
+                                            <img th:src="@{/static/img/no-data.svg" />
+                                            <span class="text-center nonecase-font block error-comment" th:text="${language.get('lb_no_data')?:'No data'}"></span>
+                                            <p class="text-center mb--10"><span th:text="${language.get('lb_panel_empty')?:'Place type list is empty. Please click'}"> </span><a href="javascript:void();" th:onclick="showAddPopup()" class="txt--navyblue weight--600" th:text="${language.get('lb_panel_here')?:'Add'}"></a> <span th:text="${language.get('lb_panel_setup')?:'to add new place type.'}"></span></p>
+                                        </div>
+                                        <!--End No data-->
+                                    </th:block>
+                                    <th:block th:unless="${#lists.size(googlePlaceTypeList)== 0}" >
+                                        <div id="divWaitingGooglePlaceType">
+                                            <div class="loading-page loading-box">
+                                                <div class="loading-center--absolute">
+                                                    <div class="object object--one"></div>
+                                                    <div class="object object--two"></div>
+                                                    <div class="object object--three"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <table id="tblGooglePlaceType" class="table table-bordered display font--14" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th th:text="${language.get('lb_type_code')?:'Place Type Code'}"></th>
+                                                    <th th:text="${language.get('lb_type_name')?:'Place Type Name'}"></th>
+                                                    <th class="text-center list-staff--action" th:text="${language.get('lb_action')?:'Action'}"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="item : ${googlePlaceTypeList}">
+                                                    <td th:text="${item.googlePlaceTypeCode}"></td>
+                                                    <td th:text="${item.googlePlaceTypeName}"></td>
+                                                    <td class="text-center">
+                                                        <a th:onclick="updateGooglePlaceType([(${item.googlePlaceTypeId})], [[${item.googlePlaceTypeCode}]], [[${item.googlePlaceTypeName}]])" class="btn btn__table btn--warning pr--10" title="" data-placement="left" data-tooltip="tooltip" th:data-original-title="${language.get('lb_edit')?:'Edit'}">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+                                                        <a th:onclick="showDeletePopup([(${item.googlePlaceTypeId})])" class="btn btn__table btn--danger delete-account" data-placement="left" title="" data-tooltip="tooltip" th:data-original-title="${language.get('lb_delete')?:'Delete'}">
+                                                            <i class="fa fa-trash-o"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal Add place type -->
+            <div id="myModalModify" class="modal fade modal-center" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form id="frmModifyGooglePlaceType" th:attr="action=@{/modify-google-place-type}" method="POST">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <input type="hidden" name="googlePlaceTypeId" id="txtGooglePlaceTypeId" value="0" />
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h5 class="modal-title" id="lblTitleModify"></h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row mb--10">
+                                    <label class="control-label mt--10 text-right col-md-5 col-sm-5 col-xs-5" th:text="${language.get('lb_popup_type_code')?:'Place Type Code'}"></label>
+                                    <div class=" col-md-7 col-sm-7 col-xs-7">
+                                        <input type="text" th:class="'form-control ' + (${googlePlaceTypeDTO?.errorMap?.get('googlePlaceTypeCode')} ? 'has--error' : '')" name="googlePlaceTypeCode" id="txtGooglePlaceTypeCode" th:placeholder="${language.get('lb_popup_type_code_placeholder')?:'type_code'}"/>
+                                        <span class="txt--error font--12 mt--5" th:text="${googlePlaceTypeDTO?.errorMap?.get('googlePlaceTypeCode')}"></span> 
+                                    </div>
+                                </div>
+                                <div class="row mb--10">
+                                    <label class="control-label mt--10 text-right col-md-5 col-sm-5 col-xs-5" th:text="${language.get('lb_popup_type_name')?:'Place Type Name'}"></label>
+                                    <div class=" col-md-7 col-sm-7 col-xs-7">
+                                        <input type="text" th:class="'form-control ' + (${googlePlaceTypeDTO?.errorMap?.get('googlePlaceTypeName')} ? 'has--error' : '')" name="googlePlaceTypeName" id="txtGooglePlaceTypeName" />
+                                        <span class="txt--error font--12 mt--5" th:text="${googlePlaceTypeDTO?.errorMap?.get('googlePlaceTypeName')}"></span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="submit" th:value="${language.get('lb_button_save')?:'Save'}" class="btn btn--xs btn--navyblue"/>
+                                <button type="button" class="btn btn--default btn--xs" id="close" data-dismiss="modal" th:text="${language.get('lb_button_close')?:'Close'}"></button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+            <!-- Delete place type list -->
+            <form id="frmDeleteGooglePlaceType" th:attr="action=@{/delete-google-place-type}" method="POST" class="hidden" >
+                <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="hidden" name="deleteGooglePlaceTypeId" id="txtDeleteGooglePlaceTypeId"/>
+            </form>
+            <input type="hidden" id="txtSessionLanguage" th:value="${session.language}"/>
+        </div>
+    </body>
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/static/plugins/sweet-alert/sweetalert.min.js}" type="text/javascript"></script>
+        <script th:src="@{/static/plugins/data-table/jquery.dataTables.min.js}" type="text/javascript"></script>
+        <script th:src="@{/static/plugins/jquery.validate/jquery.validate.min.js}" type="text/javascript"></script>
+        <script th:src="@{'/static/plugins/jquery.validate/localization/validate-' + ${session.language} + '.js'}" src=""></script>
+        <script th:src="@{/static/js/custom.js}" type="text/javascript"></script>
+
+        <script>
+            $(document).ready(function () {
+                var sessionLanguage = $("#txtSessionLanguage").val().length > 0 ? $("#txtSessionLanguage").val().toLowerCase() : "ja";
+                $('#tblGooglePlaceType').DataTable({
+                    "language": {
+                        "url": "[(@{/static/plugins/data-table/languages/datatable-" + sessionLanguage + ".json})]"
+                    },
+                    "lengthMenu": [
+                        [25, 50, 100, -1], [25, 50, 100, "[[${language.get('lb_select_all')?:'All'}]]"]
+                    ],
+                    "order": [
+                        [0, 'asc']
+                    ],
+                    "scrollX": true,
+                    "columnDefs": [
+                        {"width": 80, "targets": [2]},
+                        {orderable: false, "targets": [2]}
+                    ],
+                    "initComplete": function () {
+                        hideWait("#divWaitingGooglePlaceType");
+                    }
+                });
+                $.validator.addMethod("spaceCheck", function (value, element) {
+                    return this.optional(element) || /^\S*$/.test(value);
+                });
+                $("#frmModifyGooglePlaceType").validate({
+                    errorElement: 'span', //default input error message container
+                    errorClass: 'txt--error font--12 mt--5', // default input error message class
+                    focusInvalid: false, // do not focus the last invalid input
+                    rules: {
+                        "googlePlaceTypeCode": {
+                            required: true,
+                            spaceCheck: true,
+                            maxlength: 50
+                        },
+                        "googlePlaceTypeName": {
+                            required: true,
+                            maxlength: 100
+                        }
+                    },
+                    highlight: function (element) { // hightlight error inputs
+                        $(element).closest('.form-group').addClass('has--error'); // set error class to the control group
+                    },
+                    unhighlight: function (element) { // revert the change done by hightlight
+                        $(element).closest('.form-group').removeClass('has--error'); // set error class to the control group
+                    },
+                    success: function (label) {
+                        label.closest('.form-group').removeClass('has--error'); // set success class to the control group
+                    },
+                    submitHandler: function (e) {
+                        $("#close").click();
+                        showWait("#showWaitGooglePlaceType");
+                        $("#frmModifyGooglePlaceType").submit();
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            });
+            var showAddPopup = function () {
+                $("#lblTitleModify").text("[[${language.get('lb_popup_add_title')?:'Add Google Place Type'}]]");
+                // reset default
+                $("#txtGooglePlaceTypeId").val("0");
+                $("#txtGooglePlaceTypeCode").val("");
+                $("#txtGooglePlaceTypeName").val("");
+                // remove error class
+                $("#txtGooglePlaceTypeCode").removeClass("has--error");
+                $("#txtGooglePlaceTypeName").removeClass("has--error");
+                $(".txt--error").text("");
+                // show popup
+                $('#myModalModify').modal('show');
+            };
+            var updateGooglePlaceType = function (id, code, name) {
+                $("#lblTitleModify").text("[[${language.get('lb_popup_update_title')?:'Update Google Place Type'}]]");
+                // reset default
+                $("#txtGooglePlaceTypeId").val(id);
+                $("#txtGooglePlaceTypeCode").val(code);
+                $("#txtGooglePlaceTypeName").val(name);
+                // remove error class
+                $("#txtGooglePlaceTypeCode").removeClass("has--error");
+                $("#txtGooglePlaceTypeName").removeClass("has--error");
+                $(".txt--error").text("");
+                // show popup
+                $('#myModalModify').modal('show');
+            };
+            var showDeletePopup = function (id) {
+                showAlertDelete("[[${language.get('lb_delete_alert')?:'Are you sure to delete this google place types?'}]]",
+                        "deleteGooglePlaceType(" + id + ")",
+                        "[[${language.get('lb_delete_alert_content')?:'You can not recover it after delete successfully!'}]]",
+                        "[[${language.get('lb_delete_alert_yes')?:'Yes'}]]",
+                        "[[${language.get('lb_delete_alert_cancel')?:'Cancel'}]]");
+            };
+            var deleteGooglePlaceType = function (id) {
+                showWait("#showWaitGooglePlaceType");
+                $("#txtDeleteGooglePlaceTypeId").val(id);
+                $("#frmDeleteGooglePlaceType").submit();
+            };
+        </script>
+
+        <th:block th:if="${googlePlaceTypeDTO?.errorMap}">
+            <th:block th:if="${googlePlaceTypeDTO.googlePlaceTypeId == 0}">
+                <script>
+                    $("#lblTitleModify").text("[[${language.get('lb_popup_add_title')?:'Add Google Place Type'}]]");
+                    $('#myModalModify').modal('show');
+                </script>
+            </th:block>
+            <th:block th:unless="${googlePlaceTypeDTO.googlePlaceTypeId == 0}">
+                <script>
+                    $("#lblTitleModify").text("[[${language.get('lb_popup_update_title')?:'Update Google Place Type'}]]");
+                    $('#myModalModify').modal('show');
+                </script>
+            </th:block>
+        </th:block>
+
+        <!--Notification Add Place Type-->
+        <th:block th:if="${statusAddGooglePlaceType != null}">
+            <th:block th:if="${statusAddGooglePlaceType== 'SUCCESS'}">
+                <script>
+                    showAlert("[[${language.get('lb_alert_success')?:'Successful!'}]]", "[[${language.get('lb_alert_add_success')?:'Add Google place type successfully!'}]]", "success");
+                </script>
+            </th:block>
+            <th:block th:unless="${statusAddGooglePlaceType== 'SUCCESS'}">
+                <script>
+                    showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_alert_add_error')?:'Add Google place type failed!'}]]", "error");
+                </script>
+            </th:block>
+        </th:block>
+
+        <!--Notification Update Place Type-->
+        <th:block th:if="${statusUpdateGooglePlaceType} != null">
+            <th:block th:if="${statusUpdateGooglePlaceType == 'SUCCESS'}">
+                <script>
+                    showAlert("[[${language.get('lb_alert_success')?:'Successful!'}]]", "[[${language.get('lb_alert_update_success')?:'Update Google place type successfully!'}]]", "success");
+                </script>
+            </th:block>
+            <th:block th:unless="${statusUpdateGooglePlaceType == 'SUCCESS'}">
+                <script>
+                    showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_alert_update_error')?:'Update Google place type failed!'}]]", "error");
+                </script>
+            </th:block>
+        </th:block>
+
+        <!--Notification Delete Place Type-->
+        <th:block th:if="${statusDeleteGooglePlaceType != null}">
+            <th:block th:if="${statusDeleteGooglePlaceType == 'SUCCESS'}">
+                <script>
+                    showAlert("[[${language.get('lb_alert_success')?:'Successful!'}]]", "[[${language.get('lb_alert_delete_success')?:'Delete selected Google place type successfully!'}]]", "success");
+                </script>
+            </th:block>
+            <th:block th:unless="${statusDeleteGooglePlaceType == 'SUCCESS'}">
+                <script>
+                    showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_alert_delete_error')?:'Delete selected Google place type failed!'}]]", "error");
+                </script>
+            </th:block>
+        </th:block>
+
+    </th:block>
+</html>

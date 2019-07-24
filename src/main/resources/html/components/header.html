@@ -1,0 +1,59 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Header Component</title>
+    </head>
+    <body>
+        <nav id="dev_header" class="navbar bg--header">
+            <div class="nav-wrap">
+                <div class="mobile-only-brand pull-left">
+                    <div class="nav-header pull-left">
+                        <div class="logo-wrap">
+                            <a th:href="@{/dashboard}">
+                                <span class="brand-text brand__pc">
+                                    <img th:src="@{/static/img/header_logo.png}"/>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    <a id="toggle_nav_btn" class="toggle-left-nav-btn img-circle  pull-left" href="javascript:void(0);">
+                        <i class="fa fa-indent"></i>
+                    </a>
+                </div>
+                <div id="mobile_only_nav" class="mobile-only-nav pull-right">
+                    <ul class="nav navbar-right top-nav pull-right">
+                        <li class="dropdown alert-drp">
+                            <li class="dropdown auth-drp">
+                                <a href="#" class="dropdown-toggle pr--0" data-toggle="dropdown">
+                                    <img th:src="@{/static/img/user_settings.png}" alt="user_auth" class="no-auth-img" />
+                                </a>
+                                <ul class="dropdown-menu user-auth-dropdown" data-dropdown-in="fadeInUp" data-dropdown-out="fadeOutDown">
+                                    <li>
+                                        <div class="user-name-text" th:text="${'rmith2019@gmail.com'}"></div>
+                                    </li>
+                                    <li>
+                                        <a th:href="@{/profile}">
+                                            <i class="fa fa-user"></i>
+                                            <span class="nonecase--font" th:text="${'Profile'}"></span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <form id="frmSignOut" th:attr="action=@{/sign-out}" method="POST">
+                                            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+                                            <button type="submit" class="btn--logout">
+                                                <i class="fa fa-sign-out"></i>
+                                                <span th:text="${'Sign Out'}"></span>
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="@{/login}" class="txt--light" th:text="${'Log In'}"></a>
+                            </li>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </body>
+</html>

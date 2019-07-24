@@ -1,0 +1,85 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Site bar</title>
+    </head>
+    <body>
+        <div id="div_sitebar" class="fixed-sidebar-left">
+            <ul class="nav navbar-nav side-nav nicescroll-bar">
+                <li>
+                    <a th:class="${'active'}" th:href="@{/dashboard}" data-toggle="collapse">
+                        <div class="pull-left">
+                            <i class="fa fa-tachometer mr--10"></i>
+                            <span class="right-nav-text" th:text="${'Dashboard'}"></span>
+                        </div>
+                        <div class="clearfix"></div>
+                    </a>
+                </li>
+
+                <li>
+                    <a  href="javascript:void(0);" data-toggle="collapse" data-th-attr="data-target='#' + ${'setting'} + '_dr'">  
+                        <div class="pull-left">
+                            <i th:class="${'fa fa-user mr--10'}"></i>
+                            <span class="right-nav-text" th:text="${'Setting'}"></span>
+                        </div>
+                        <div class="pull-right ml--5">
+                            <i class="fa fa-angle-down"></i>
+                        </div>
+                        <div class="clearfix"></div>
+                    </a>
+                    <ul th:id="${'setting'} + '_dr'" class="collapse collapse-level-1">
+                        <script>
+                            document.querySelector("a[data-target='#setting_dr']").classList.add("active");
+                        </script>
+                        <li>
+                            <a class="active" th:href="@{'/' + ${'account'}}">
+                                <span th:text="${'Account'}"></span> 
+                            </a>
+                        </li>
+                        <li>
+                            <a class="active" th:href="@{'/' + ${'account'}}">
+                                <span th:text="${'Package'}"></span> 
+                            </a>
+                        </li>
+                        <li>
+                            <a class="active" th:href="@{'/' + ${'account'}}">
+                                <span th:text="${'Group'}"></span> 
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a  href="javascript:void(0);" data-toggle="collapse" data-th-attr="data-target='#' + ${'other'} + '_dr'">  
+                        <div class="pull-left">
+                            <i th:class="${'fa fa-user mr--10'}"></i>
+                            <span class="right-nav-text" th:text="${'Other'}"></span>
+                        </div>
+                        <div class="pull-right ml--5">
+                            <i class="fa fa-angle-down"></i>
+                        </div>
+                        <div class="clearfix"></div>
+                    </a>
+                    <ul th:id="${'other'} + '_dr'" class="collapse collapse-level-1">
+                        <script>
+                            document.querySelector("a[data-target='#setting_dr']").classList.add("active");
+                        </script>
+                        <li>
+                            <a class="active" th:href="@{'/' + ${'account'}}">
+                                <span th:text="${'Account'}"></span> 
+                            </a>
+                        </li>
+                        <li>
+                            <a class="active" th:href="@{'/' + ${'account'}}">
+                                <span th:text="${'Package'}"></span> 
+                            </a>
+                        </li>
+                        <li>
+                            <a class="active" th:href="@{'/' + ${'account'}}">
+                                <span th:text="${'Group'}"></span> 
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>

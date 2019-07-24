@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{layout}">
+    <head>
+        <title>Notifications | Local Search</title>
+        <th:block layout:fragment="css">
+            <link type="text/css" rel="stylesheet" th:href="@{/static/css/pages/notification.css}" />
+        </th:block>
+    </head>
+    <body>
+        <div layout:fragment="content">
+
+            <div class="row bheading-title">
+                <!-- Breadcrumb -->
+                <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                    <ol class="breadcrumb">
+                        <li><a th:href="@{/dashboard}">[[${language.get('lb_dashboard')?:'Dashboard'}]]</a></li>
+                        <li class="active"><span>[[${language.get('lb_notification')?:'Notification'}]]</span></li>
+                    </ol> 
+                </div>
+                <!-- /Breadcrumb -->
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 text-right">
+                    <h5 class="txt--dark">[[${language.get('lb_notification')?:'Notification'}]]</h5>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="panel panel-default border-panel card-view card-notifications">
+                        <div class="panel-heading">
+                            <div class="pull-left">
+                                <h6 class="panel-title txt-dark">[[${language.get('lb_notification')?:'Notification'}]]</h6>
+                            </div>
+                            <div class="pull-right">
+                                <div class="flex flex-middle">
+                                    <button type="button" class="btn btn--navyblue btn--xs" onclick='updateSeenAllNotification()'>[[${language.get('lb_mark_all_as_read')?:'Mark all as read'}]]</button>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div id="content" style="display:none">
+                            <th:block th:each="item : ${notifications}">
+                                <div  class="panel panel-default" th:classappend="${!item.seen} ? 'no-read' " th:attr="notificationId=${item.notificationId}" >
+                                    <div class="panel-heading" role="tab" id="heading1">
+                                        <a role="button" class="collapsed " data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapse1">
+                                            <div class="flex ">
+                                                <div class="title-notif truncate">
+                                                    [[${item.subject}]]
+                                                </div>
+                                                <div class="txt-grey info-notif truncate">
+                                                    <!--                            Text here-->
+                                                </div>
+                                                <div class="date-notif font--14">[[${item.activeDate}]]</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div id="collapse1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading1">
+                                        <div class="panel-body">
+                                            [(${item.notification})]
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                        <div class="panel-wrapper collapse in">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-3 col-xs-3 notification-tab">
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li role="presentation" th:classappend="${#strings.equals(notificationsType, 'unread')} ? 'active'" >
+                                                <a th:href="@{/notifications?type=unread}" aria-controls="home" role="tab" >[[${language.get('lb_unread')?:'Unread'}]]<span class="notifications--number">[[${numUnread}]]</span></a>
+                                            </li>
+                                            <li role="presentation" th:classappend="${#strings.equals(notificationsType, 'read')} ? 'active'" >
+                                                <a th:href="@{/notifications?type=read}" aria-controls="profile" role="tab" >[[${language.get('lb_read')?:'Read'}]] <span class="notifications--number">[[${numRead}]]</span></a>
+                                            </li>
+                                            <li role="presentation" th:classappend="${#strings.equals(notificationsType, 'all')} ? 'active'" >
+                                                <a th:href="@{/notifications?type=all}" aria-controls="messages" role="tab" >[[${language.get('lb_all_notifications')?:'All notifications'}]] <span class="notifications--number">[[${numUnread+numRead}]]</span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-9 col-sm-9 col-xs-9 notification-post">
+                                        <div class="tab-content">
+                                            <div role="tabpanel" class="tab-pane" th:classappend="${#strings.equals(notificationsType, 'unread')} ? 'active'" id="read">
+                                                <div class="panel-group level1" id="contentUnread" role="tablist" aria-multiselectable="true">
+
+                                                </div>
+                                            </div>
+                                            <div role="tabpanel" class="tab-pane" th:classappend="${#strings.equals(notificationsType, 'read')} ? 'active'" id="unread">
+                                                <div class="panel-group level1" id="contentRead" role="tablist" aria-multiselectable="true">
+                                                </div>
+                                            </div>
+                                            <div role="tabpanel" class="tab-pane" th:classappend="${#strings.equals(notificationsType, 'all')} ? 'active'" id="allNotifications">
+                                                <div class="panel-group level1" id="contentAll" role="tablist" aria-multiselectable="true">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>   
+            <input type="hidden" id="notificationsType" th:value="${notificationsType}"/>
+        </div>
+    </body>
+    <th:block layout:fragment="scripts">
+
+        <script>
+            var initContent = function () {
+                var html = $("#content").html();
+                $("#content").html("");
+                if ($("#notificationsType").val() === 'all') {
+
+                    $("#contentAll").html(html);
+                }
+                if ($("#notificationsType").val() === 'read') {
+                    $("#contentRead").html(html);
+                }
+                if ($("#notificationsType").val() === 'unread') {
+                    $("#contentUnread").html(html);
+                }
+
+
+            }();
+            $('.collapsed').click(function () {
+                $(this).parent().next().collapse('toggle');
+            });
+            $(".no-read").click(function () {
+                if (typeof this.isUpdated === "undefined") {
+                    $(this).removeClass('no-read');
+                    updateSeenNotification({notificationId: $(this).attr("notificationId")});
+                    this.isUpdated = true;
+                }
+            });
+            var updateSeenNotification = function (notificationId) {
+                $.ajax({
+                    headers: {'X-CSRF-TOKEN': '[[${_csrf.token}]]'},
+                    url: '[[@{/update-seen-notification}]]',
+                    type: 'POST',
+                    data: notificationId
+                });
+
+            };
+            var updateSeenAllNotification = function () {
+                var notificationIds = [];
+                $(".no-read").each(function (index, elm) {
+                    $(elm).removeClass('no-read');
+                    notificationIds.push($(elm).attr("notificationId"));
+                });
+                updateSeenNotification({notificationId: notificationIds.toString()});
+            };
+        </script>
+    </th:block>
+
+</html>
+

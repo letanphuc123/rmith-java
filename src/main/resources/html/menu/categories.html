@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{layout}">
+    <head>
+        <title>Categories | Local Search</title>
+        <th:block layout:fragment="css">
+            <link rel="stylesheet" th:href="@{/static/plugins/data-table/jquery.dataTables.min.css}" type="text/css" />
+        </th:block>
+    </head>
+    <body>
+        <div layout:fragment="content"> 
+            <div class="row bheading-title">
+                <!-- Breadcrumb -->
+                <div class="col-lg-9 col-sm-8 col-xs-12">
+                    <ol class="breadcrumb">
+                        <li><a th:href="@{/dashboard}" th:text="${language.get('lb_dashboard')?:'Dashboard'}"></a></li> 
+                        <li class="active"><span th:text="${language.get('lb_category')?:'Category'}"></span></li> 
+                    </ol> 
+                </div> 
+                <!-- /Breadcrumb --> 
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 text-right"> 
+                    <h5 class="txt--dark" th:text="${language.get('lb_category')?:'Category'}"></h5> 
+                </div> 
+            </div> 
+
+            <div class="row"> 
+                <div id="divBlockCategoryWaiting"></div> 
+                <div class="col-md-12 col-sm-12 col-xs-12"> 
+                    <div class="panel panel-default border-panel card-view"> 
+                        <div class="panel-heading"> 
+                            <div class="pull-right"> 
+                                <a onclick="showCategoryPopup('', '', '', 'administrator', 0, 'add')" 
+                                   data-toggle="modal" data-target="#myModalCategory" 
+                                   class="btn btn--navyblue btn--xs"
+                                   th:text="${language.get('lb_add_category')?:'Add Category'}">
+                                </a> 
+                            </div> 
+                            <div class="clearfix"></div> 
+                        </div> 
+                        <div class="panel-wrapper collapse in"> 
+                            <div class="panel-body"> 
+                                <div class="table-wrap">
+                                    <th:block th:if="${categoryList != null and not #lists.isEmpty(categoryList)}">
+                                        <div id="divCategoriesWaiting">
+                                            <div class="loading-page loading-box">
+                                                <div class="loading-center--absolute">
+                                                    <div class="object object--one"></div>
+                                                    <div class="object object--two"></div>
+                                                    <div class="object object--three"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <table id="tbl_category" class="table table-hover table-bordered display font--14" style="width:100%;"> 
+                                            <thead> 
+                                                <tr> 
+                                                    <th th:text="${language.get('lb_menu_name')?:'Menu Name'}"></th> 
+                                                    <th th:text="${language.get('lb_category_name')?:'Category Name'}"></th> 
+                                                    <th class="text-center" th:text="${language.get('lb_order')?:'Order'}"></th> 
+                                                    <th class="text-right" th:text="${language.get('lb_update_date')?:'Updated date'}"></th> 
+                                                    <th class="text-center" th:text="${language.get('lb_action')?:'Action'}"></th> 
+                                                </tr> 
+                                            </thead> 
+                                            <tbody>
+                                                <tr th:each="item : ${categoryList}"> 
+                                                    <td th:text="${ (language.get('lb_menu')?:'Menu: ') + ' ' + item.menuName}"></td> 
+                                                    <td th:attr="data-menu-name=${item.menuName}" th:text="${item.categoryName}"></td> 
+                                                    <td class="text-center" th:text="${item.orderNumber}"></td> 
+                                                    <td class="text-right" th:utext="${#strings.replace(item.updatedDate,' ','<br />')}"></td> 
+                                                    <td class="text-center dt-nowrap"> 
+                                                        <a th:onclick="showCategoryPopup([[${item?.categoryId}]],
+                                                           [[${item?.categoryName}]],
+                                                           [[${item?.categoryCode}]],
+                                                           [[${item?.menuCode}]],
+                                                           [[${item?.orderNumber}]],
+                                                           'update',
+                                                           [[${item?.categoryId}]]);" 
+                                                           data-toggle="modal" data-target="#myModalCategory" 
+                                                           class="btn btn__table btn--warning" data-tooltip="tooltip" 
+                                                           th:attr="data-original-title=${language.get('lb_action_edit')?:'Edit'}"
+                                                           data-placement="left" >
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+                                                        <a th:onclick="showAlertDelete([[${language.get('lb_delete_title')?:'Delete Category'}]], 
+                                                           'deleteCategory([[${item.categoryId}]])', 
+                                                           [[${language.get('lb_delete_alert_content')?:'You can not recover it after delete successfully!'}]], 
+                                                           [[${language.get('lb_delete_alert_yes')?:'Yes'}]], 
+                                                           [[${language.get('lb_delete_alert_cancel')?:'Cancle'}]])"
+                                                           class="btn btn__table btn--danger delete-staff" data-tooltip="tooltip" 
+                                                           th:attr="data-original-title=${language.get('lb_action_delete')?:'Delete'}"
+                                                           data-placement="left">
+                                                            <i class="fa fa-trash-o"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </th:block>
+
+                                    <th:block th:if="${categoryList == null or #lists.isEmpty(categoryList)}">
+                                        <!-- Show no data -->
+                                        <div class="no-data text-center">
+                                            <img th:src="@{/static/img/no-data.svg}" />
+                                            <span class="text-center nonecase-font block error-comment" th:text="${language.get('lb_no_data')?:'No data'}"></span> 
+                                            <p class="text-center mb--10" th:text="${language.get('lb_empty')?:'List category is empty!'}"></p>
+                                        </div>
+                                        <!--End No data-->
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Modal Add Group-->
+            <div id="elmWaiting">
+                <div id="myModalCategory" class="modal fade modal-center" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                <h5 class="modal-title" id="myModalLabel" 
+                                    th:text="${language.get('lb_add_new_category')?:'Add New Category'}">
+                                </h5> 
+                            </div>
+                            <form id="frmCategory" method="POST">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                <input name="categoryId" id="categoryId" type="hidden" value="0" />
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="form-group mb--10 clearfix">
+                                            <label class="pt--10 col-md-4 col-sm-4 col-xs-4 control-label text-right" 
+                                                   th:text="${language.get('lb_category_code')?:'Category Code'}">
+                                            </label> 
+                                            <div class="col-md-8 col-sm-8 col-xs-8">
+                                                <input type="text" class="form-control" name="categoryCode" id="txtCategoryCode" autocomplete="off" />
+                                                <span class="txt--error font--12 mt--5" th:text="${categoryDTO?.errorMap?.get('menuCode')}"></span> 
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb--10 clearfix">
+                                            <label class="pt--10 col-md-4 col-sm-4 col-xs-4 control-label text-right" 
+                                                   th:text="${language.get('lb_category_name')?:'Category Name'}">
+                                            </label> 
+                                            <div class="col-md-8 col-sm-8 col-xs-8">
+                                                <input type="text" class="form-control" name="categoryName" id="txtCategoryName" autocomplete="off" />
+                                                <span class="txt--error font--12 mt--5" th:text="${categoryDTO?.errorMap?.get('categoryName')}"></span> 
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb--10 clearfix">
+                                            <label class="pt--10 col-md-4 col-sm-4 col-xs-4 control-label text-right" 
+                                                   th:text="${language.get('lb_menu')?:'Menu'}">
+                                            </label> 
+                                            <div class="col-md-8 col-sm-8 col-xs-8">
+                                                <select id="selMenuCode" name="menuCode" class="form-control" data-placeholder="Select menu">
+                                                    <option th:each="item: ${menuList}" 
+                                                            th:value="${item.menuCode}" 
+                                                            th:text="${item.menuName}">
+                                                    </option>
+                                                    <span class="txt--error font--12 mt--5" th:text="${categoryDTO?.errorMap?.get('menuCode')}"></span> 
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb--10 clearfix">
+                                            <label class="pt--10 col-md-4 col-sm-4 col-xs-4 control-label text-right" th:text="${language.get('lb_order_number')?:'Order Number'}"></label> 
+                                            <div class="col-md-8 col-sm-8 col-xs-8">
+                                                <input type="text" class="form-control" id="txtOrder" name="orderNumber" autocomplete="off" value="0" />
+                                                <span class="txt--error font--12 mt--5" th:text="${categoryDTO?.errorMap?.get('order')}"></span> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <input id="btnSaveCategory" type="submit" 
+                                               class="btn btn--navyblue btn--xs" 
+                                               th:value="${language.get('lb_button_save')?:'Save'}" />
+                                        <button type="button" data-dismiss="modal" 
+                                                class="btn btn--default btn--xs" 
+                                                th:text="${language.get('lb_button_close')?:'Close'}"></button>
+                                    </div>
+                            </form>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+            </div>
+
+            <input type="hidden" id="txtContextPath" th:value="@{/}" />
+            <input type="hidden" id="txtSessionLanguage" th:value="${session.language}" />
+            <!--Form hidden delete-->
+            <form hidden method="POST" id="frmDelete">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input id="idCategoryDelete" value="" />
+            </form>
+        </div>
+    </body>
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/static/plugins/data-table/jquery.dataTables.min.js}"></script>
+        <script th:src="@{'/static/plugins/jquery.validate/localization/validate-' + ${session.language} + '.js'}"></script>
+        <script th:src="@{/static/js/categories.js}"></script>
+
+        <th:block th:if="${categoryDTO?.errorMap != null and not #lists.isEmpty(categoryDTO?.errorMap)}">
+            <script>
+                showCategoryPopup(
+                        "[[${categoryDTO?.categoryId}]]",
+                        "[[${categoryDTO?.categoryName}]]",
+                        "[[${categoryDTO?.menuCode}]]",
+                        "[[${categoryDTO?.order}]]",
+                        "[[${myStatus}]]",
+                        "[(${categoryDTO?.id})]"
+                        );
+            </script>
+        </th:block>
+        <th:block th:if="${addSuccess != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_success')?:'Successful!'}]]", "[[${language.get('lb_add_success')?:'Add category successfully!'}]]", "success", true);
+            </script>
+        </th:block>
+        <th:block th:if="${addError != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_error')?:'An error has occurred! Please try again later'}]]", "error", true);
+            </script>
+        </th:block>
+        <th:block th:if="${updateSuccess != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_success')?:'Successful!'}]]", "[[${language.get('lb_update_success')?:'Update category successfully!'}]]", "success", true);
+            </script>
+        </th:block>
+        <th:block th:if="${updateError != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_error')?:'An error has occurred! Please try again later'}]]", "error", true);
+            </script>
+        </th:block>
+        <th:block th:if="${deleteSuccess != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_success')?:'Successful!'}]]", "[[${language.get('lb_delete_success')?:'Delete category successfully!'}]]", "success", true);
+            </script>
+        </th:block>
+        <th:block th:if="${categoryHasModule != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_warning')?:'Warning!'}]]", "[[${language.get('lb_alert_category_had_module')?:'Can not delete! This category is containing modules.'}]]", "warning");
+            </script>
+        </th:block>
+        <th:block th:if="${deleteError != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_error')?:'An error has occurred! Please try again later'}]]", "error", true);
+            </script>
+        </th:block>    
+        <th:block>
+            <script>
+                $(document).ready(function () {
+                    var addNewCategory = "[[${language.get('lb_add_new_category')?:'Add New Category'}]]";
+                    var updateCategory = "[[${language.get('lb_update_category')?:'Update Category'}]]";
+
+                    Categories.init(addNewCategory, updateCategory);
+                });
+            </script>
+        </th:block>
+    </th:block>
+</html>

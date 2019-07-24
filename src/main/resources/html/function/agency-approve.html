@@ -1,0 +1,320 @@
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{layout}">
+    <head>
+        <title>Agency Approve | Local Search</title> 
+        <th:block layout:fragment="css">
+            <link rel="stylesheet" th:href="@{/static/plugins/data-table/jquery.dataTables.min.css}" type="text/css" />
+            <link rel="stylesheet" th:href="@{/static/css/pages/agency.css}" type="text/css" />
+        </th:block>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <!-- Component page -->
+            <div class="row bheading-title">
+                <!-- Breadcrumb -->
+                <div class="col-lg-9 col-sm-8 col-xs-12">
+                    <ol class="breadcrumb">
+                        <li><a th:href="@{/dashboard}" th:text="${language.get('lb_dashboard')?:'Dashboard'}"></a></li>
+                        <li class="active"><span th:text="${language.get('lb_agency_manage_upgrade')?:'Agency approve'}"></span></li>
+                    </ol> 
+                </div>
+                <!-- /Breadcrumb -->
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 text-right">
+                    <h5 class="txt-dark" th:text="${language.get('lb_agency_manage_upgrade')?:'Agency approve'}"></h5>
+                </div>
+            </div>
+            <!-- End component page -->
+
+            <!-- Content body -->
+            <div class="row mt-10">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pl--5 pr--5">
+                    <blockquote class="bg--light">
+                        <th:block th:if="${language.get('lb_notification_approve_agency_tutorial')} != null">
+                            [(${language.get('lb_notification_approve_agency_tutorial')})]
+                        </th:block>
+                        <th:block th:unless="${language.get('lb_notification_approve_agency_tutorial')} != null">
+                            <h6 class="panel-title txt-dark">List account are waiting approve to agency:</h6>
+                            <p>- Click <b class="txt--success"><i class="fa fa-check" aria-hidden="true"></i> (Approve)</b> if this account has enough to conditions to approve to agency!</p>
+                            <p>- Click <b class="txt--danger"><i class="fa fa-times" aria-hidden="true"></i> (Deny)</b> if this account has not enough to conditions to approve to agency!</p>
+                            <p>- Click <b class="txt--danger"><i class="fa fa-ban" aria-hidden="true"></i> (Cancel)</b> if account be upgraded to agency and this account want to cancel agency!</p>
+                        </th:block>
+                    </blockquote>
+                </div>
+            </div>
+
+            <div class="row mt-10">
+                <div id="divBlockAgencyWaiting"></div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="panel panel-default border-panel card-view">
+                        <div class="panel-wrapper collapse in">
+                            <div class="panel-body">
+                                <div class="table-wrap">
+                                    <th:block th:if="${approveAgencyDTOList != null and !approveAgencyDTOList.empty}">
+                                        <div id="divAgencyWaiting">
+                                            <div class="loading-page loading-box">
+                                                <div class="loading-center--absolute">
+                                                    <div class="object object--one"></div>
+                                                    <div class="object object--two"></div>
+                                                    <div class="object object--three"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <table id="tblAgencyUpgrade" class="table table-hover table-bordered display font--14" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th th:text="${language.get('lb_website')?:'Website'}"></th>
+                                                    <th th:text="${language.get('lb_company')?:'Company'}"></th>
+                                                    <th th:text="${language.get('lb_status_approve')?:'Status Approve'}"></th>
+                                                    <th th:text="${language.get('lb_action')?:'Action'}" class="text-center"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <th:block th:each="item : ${approveAgencyDTOList}">
+                                                    <tr>
+                                                        <td th:text="${item.urlAgency}"></td>
+                                                        <td th:text="${item.companyAgency}"></td>
+                                                        <td>
+                                                            <th:block th:if="${item.isStatus == 1}">
+                                                                <span class="txt--warning" th:text="${language.get('lb_waiting')?:'Waiting'}"></span>
+                                                            </th:block>
+                                                            <th:block th:if="${item.isStatus == 2}">
+                                                                <span class="txt--default" th:text="${language.get('lb_cancel')?:'Cancel'}"></span>
+                                                            </th:block>
+                                                            <th:block th:if="${item.isStatus == 3}">
+                                                                <span class="txt--danger" th:text="${language.get('lb_deny')?:'Deny'}"></span>
+                                                            </th:block>
+                                                            <th:block th:if="${item.isStatus == 4}">
+                                                                <span class="txt--success" th:text="${language.get('lb_approve')?:'Approve'}"></span>
+                                                            </th:block>
+                                                        </td>
+                                                        <td class="text-left dt-nowrap">
+                                                            <!-- Detail agency -->
+                                                            <a class="btn btn--xs btn__table btn--navyblue btnDetailAgency" th:data-account-id="${item.agencyId}" data-placement="left" data-tooltip="tooltip" th:attr="data-original-title=${language.get('lb_detail')?:'Detail'}"><i class="fa fa-eye"></i></a>
+                                                            <!-- Status waiting upgrade agency -->
+                                                            <th:block th:if="${item.isStatus == 1}">
+                                                                <a class="btn btn--xs btn__table btn--success btnApproveAgency" th:data-account-id="${item.agencyId}" th:data-group-id="${item.groupId}" data-placement="left" data-tooltip="tooltip" th:attr="data-original-title=${language.get('lb_approve')?:'Approve'}"><i class="fa fa-check" aria-hidden="true"></i></a>
+                                                                <a class="btn btn--xs btn__table btn--danger btnDenyAgency" th:data-account-id="${item.agencyId}" data-placement="left" data-tooltip="tooltip" th:attr="data-original-title=${language.get('lb_deny')?:'Deny'}"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                                            </th:block>
+                                                            <!-- Status approve upgrade agency -->
+                                                            <th:block th:if="${item.isStatus == 4}">
+                                                                <a class="btn btn--xs btn__table btn--danger btnCancelAgency" th:data-account-id="${item.agencyId}" th:data-group-id="${item.groupId}" data-placement="left" data-tooltip="tooltip" th:attr="data-original-title=${language.get('lb_cancel')?:'Cancel'}"><i class="fa fa-ban" aria-hidden="true"></i></a>
+                                                            </th:block>
+                                                        </td>
+                                                    </tr>
+                                                </th:block>
+                                            </tbody>
+                                        </table>
+                                    </th:block>
+
+                                    <th:block th:unless="${approveAgencyDTOList!=null and !approveAgencyDTOList.empty}">
+                                        <!-- Show no data -->
+                                        <div class="row mt-10">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <div class="panel panel-default border-panel card-view">
+                                                    <div class="no-data text-center">
+                                                        <img th:src="@{/static/img/no-data.svg}" />
+                                                        <span class="text-center nonecase-font block error-comment" th:text="${language.get('lb_no_data')?:'No data'}"></span>
+                                                        <p class="text-center mb--10" th:text="${language.get('lb_list_empty')?:'List account are waiting approve upgrade to agency is empty!'}"></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--End No data-->
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End content body -->
+
+            <!-- Form -->
+            <p class="display--none" id="txtNotificationApproveAgency" th:text="${language.get('lb_notification_approve_agency')?:'You read all above notification. If you want to approve this account then click <b>Yes</b> or close then click <b>No</b>'}"></p>
+            <p class="display--none" id="txtNotificationDenyAgency" th:text="${language.get('lb_notification_deny_agency')?:'You read all above notification. If you want to deny approve this account then click <b>Yes</b> or close then click <b>No</b>'}"></p>
+            <p class="display--none" id="txtNotificationCancelAgency" th:text="${language.get('lb_notification_cancel_approve_agency')?:'You read all above notification. If you want to canel approve this account then click <b>Yes</b> or close then click <b>Close</b>'}"></p>
+            <form id="frmApproveAgency" th:attr="action=@{/approve-agency}" method="post">   
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="hidden" th:name="accountId" id="txtAccountId"/>
+                <input type="hidden" th:name="groupId" id="txtGroupId">
+            </form>
+            <!-- End form -->
+
+            <!-- Language -->
+            <input type="hidden" id="txtSessionLanguage" th:value="${session.language}"/>
+            <!-- End language -->
+
+        </div>
+    </body>
+
+    <!-- Script -->
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/static/plugins/data-table/jquery.dataTables.min.js}" type="text/javascript"></script>
+        <script >
+            $(document).ready(function () {
+                var sessionLanguage = $("#txtSessionLanguage").val().length > 0 ? $("#txtSessionLanguage").val().toLowerCase() : "ja";
+                // Format grid upgrade agency
+                $('#tblAgencyUpgrade').DataTable({
+                    "language": {
+                        "url": "[(@{/static/plugins/data-table/languages/datatable-" + sessionLanguage + ".json})]"
+                    },
+                    "lengthMenu": [
+                        [25, 50, 100, -1],
+                        [25, 50, 100, "[[${language.get('lb_select_all')?: 'All'}]]"]
+                    ],
+                    "scrollX": true,
+                    "order": [
+                        [0, 'desc']
+                    ],
+                    "columnDefs": [
+                        {"width": "40%", "targets": [0]},
+                        {"width": "40%", "targets": [1]},
+                        {"width": 50, "targets": [2], className: "text-center"},
+                        {"width": 70, "targets": [3], className: "dt-left"},
+                        {orderable: false, "targets": [3]}
+                    ],
+                    "initComplete": function () {
+                        hideWait("#divAgencyWaiting");
+                    }
+                });
+
+                // Format summernote
+                $(".suDetailDescriptionAgency").each(function () {
+                    $(this).summernote({
+                        height: 300,
+                        toolbar: false
+                    });
+                    $(this).summernote("disable");
+                });
+
+                // Approve upgrade account to agency
+                $('.btnApproveAgency').click(function () {
+                    // Confirm approve
+                    var accountId = $(this).attr("data-account-id");
+                    var groupId = $(this).attr("data-group-id");
+                    swal({
+                        title: "[[${language.get('lb_approve_agency_remind')?:'Are you sure want to approve this account to agency?'}]]",
+                        html: true,
+                        text: $("#txtNotificationApproveAgency").text(),
+                        type: "warning",
+                        icon: "warning",
+                        reverseButtons: false,
+                        allowOutsideClick: true,
+                        showCancelButton: true,
+                        confirmButtonColor: "#4d90fe",
+                        confirmButtonText: "[[${language.get('lb_yes')?:'Yes'}]]",
+                        cancelButtonText: "[[${language.get('lb_no')?:'No'}]]",
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            $("#txtAccountId").val(accountId);
+                            $("#txtGroupId").val(groupId);
+                            $("#frmApproveAgency").attr("action", "[[@{/approve-agency}]]");
+                            $("#frmApproveAgency").submit();
+                        }
+                    });
+                });
+
+                // Deny upgrade account to agency
+                $('.btnDenyAgency').click(function () {
+                    // Confirm deny
+                    var accountId = $(this).attr("data-account-id");
+                    swal({
+                        title: "[[${language.get('lb_deny_agency_remind')?:'Are you sure want to deny approve this account to agency?'}]]",
+                        html: true,
+                        text: $("#txtNotificationDenyAgency").text(),
+                        type: "warning",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#4d90fe",
+                        confirmButtonText: "[[${language.get('lb_yes')?:'Yes'}]]",
+                        cancelButtonText: "[[${language.get('lb_no')?:'No'}]]",
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            $("#txtAccountId").val(accountId);
+                            $("#frmApproveAgency").attr("action", "[[@{/deny-approve-agency}]]");
+                            $("#frmApproveAgency").submit();
+                        }
+                    });
+                });
+
+                // Cancel upgrade account to agency
+                $('.btnCancelAgency').click(function () {
+                    // Confirm deny
+                    var accountId = $(this).attr("data-account-id");
+                    var groupId = $(this).attr("data-group-id");
+                    swal({
+                        title: "[[${language.get('lb_cancel_agency_remind')?:'Are you sure want to cancel approve this account to agency?'}]]",
+                        html: true,
+                        text: $("#txtNotificationCancelAgency").text(),
+                        type: "warning",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#4d90fe",
+                        confirmButtonText: "[[${language.get('lb_yes')?:'Yes'}]]",
+                        cancelButtonText: "[[${language.get('lb_no')?:'No'}]]",
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            $("#txtAccountId").val(accountId);
+                            $("#txtGroupId").val(groupId);
+                            $("#frmApproveAgency").attr("action", "[[@{/cancel-approve-agency}]]");
+                            $("#frmApproveAgency").submit();
+                        }
+                    });
+                });
+
+                // Detail agency
+                $('.btnDetailAgency').click(function () {
+                    window.location.href = "[(@{/agency-detail?agencyId=" + $(this).attr("data-account-id") + "})]";
+                });
+            });
+        </script>
+
+        <th:block th:if="${approveAgencySuccess != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_success')?:'Successful!'}]]", "[[${language.get('lb_approve_agency_susscess')?:'Approve account to agency successfully!'}]]", "success", true);
+            </script>
+        </th:block>
+
+        <th:block th:if="${approveAgencyError != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_approve_agency_fail')?:'Approve account to agency fail!'}]]", "error", true);
+            </script>
+        </th:block>
+
+        <th:block th:if="${denyApproveAgencySuccess != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_success')?:'Successful!'}]]", "[[${language.get('lb_deny_success')?:'Deny approve account to agency successfully!'}]]", "success", true);
+            </script>
+        </th:block>
+
+        <th:block th:if="${denyApproveAgencyError != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_deny_fail')?:'Deny approve account to agency fail!'}]]", "error", true);
+            </script>
+        </th:block>
+
+        <th:block th:if="${cancelApproveAgencySuccess != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_success')?:'Successful!'}]]", "[[${language.get('lb_cancel_susscess')?:'Cancel approve account to agency successfully!'}]]", "success", true);
+            </script>
+        </th:block>
+
+        <th:block th:if="${cancelApproveAgencyError != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_cancel_fail')?:'Cancel approve account to agency fail!'}]]", "error", true);
+            </script>
+        </th:block>
+
+    </th:block>
+    <!-- End script -->
+
+</html>

@@ -17,13 +17,13 @@
     </head>
     <body class="box-layout">
         <div class="wrapper horizontal-nav">
-            <!-- Header top Menu Items -->
-            <!--<div th:replace="components/header.html :: #dev_header"></div>-->
-            <!-- /Header top Menu Items -->
+            <!-- Header -->
+            <div th:replace="components/header.html :: #dev_header"></div>
+            <!-- /Header -->
 
-            <!-- Left Sidebar Menu -->
-            <!--<div th:replace="components/sidebar.html :: #div_sitebar"></div>-->
-            <!-- /Left Sidebar Menu -->
+            <!-- Sidebar -->
+            <div th:replace="components/sidebar.html :: #div_sitebar"></div>
+            <!-- /Sidebar -->
 
             <div class="page-wrapper">
                 <div class="container pt-10">
@@ -38,8 +38,9 @@
         </div>
         
         <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/js/init.js}"></script>
         <script type="text/javascript" th:src="@{/static/js/bootstrap.min.js}"></script>
-        <script type="text/javascript" th:src="@{/static/plugins/jquery.validate/jquery.validate.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/plugins/jquery/validate/jquery.validate.min.js}"></script>
         <script type="text/javascript" th:src="@{/static/plugins/sweet-alert/sweetalert.min.js}"></script>
         <th:block layout:fragment="scripts"></th:block>
     </body>
