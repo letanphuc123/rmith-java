@@ -17,7 +17,7 @@
                     </ol>
                 </div>
                 <!-- /Breadcrumb -->
-                
+
                 <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 text-right">
                     <h5 class="txt--dark" th:text="Dashboard"></h5>
                 </div>
@@ -31,6 +31,66 @@
                         </div>
                         <div class="panel-wrapper collapse in">
                             <div class="panel-body">
+                                <div class="table-wrap">
+                                    <th:block th:if="${accountDTOList != null && #lists.size(accountDTOList) > 0}">
+                                        <div id="divAccountWaiting">
+<!--                                            <div class="loading-page loading-box">
+                                                <div class="loading-center--absolute">
+                                                    <div class="object object--one"></div>
+                                                    <div class="object object--two"></div>
+                                                    <div class="object object--three"></div>
+                                                </div>
+                                            </div>-->
+                                        </div>
+
+                                        <table id="tbl_account" class="table table-hover table-bordered display font--14" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th th:text="${'Email'}"></th>
+                                                    <th th:text="${'Full Name'}"></th>
+                                                    <th th:text="${'Company Name'}"></th>
+                                                    <th th:text="${'Admin'}"></th>
+                                                    <th th:text="${'Memo'}"></th>
+                                                    <th class="text-right" th:text="${'Updated date'}"></th>
+                                                    <th class="text-center list-staff--action" th:text="${'Action'}"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="item : ${accountDTOList}">
+                                                    <td th:text="${item.email}"> </td>
+                                                    <td th:text="|${item.firstName} ${item.lastName}|"></td>
+                                                    <td th:text="${item.companyName}"></td>
+                                                    <td>
+                                                        <th:block th:if="${ item.isAdmin == 1}">
+                                                            <span class="txt--success" th:text="${'Yes'}"></span>
+                                                        </th:block>
+                                                        <th:block th:unless="${ item.isAdmin == 1}">
+                                                            <span></span>
+                                                        </th:block>
+                                                    </td>
+                                                    <td>
+                                                        <div class="tbl-truncate w--300">
+                                                            <div class="row--truncate" th:text="${item.memo}"></div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-right" th:utext="${#strings.replace(item.updatedDate,' ', '<br />')}"></td>
+                                                    <td class="text-center dt-nowrap">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </th:block>
+                                    <th:block th:unless="${accountDTOList != null && #lists.size(accountDTOList) > 0}">
+                                        <!-- Show no data -->
+                                        <div class="no-data text-center">
+                                            <span class="text-center nonecase-font block error-comment" th:text="${'No data'}"></span>
+                                            <p class="text-center mb--10" > 
+                                                <span th:text="${'List account is empty. Please click '}"></span>
+                                                <a th:href="@{/new-account}" class="txt--blue weight--600" th:text="${'here'}"></a> </p>
+                                        </div>
+                                        <!--End No data-->
+                                    </th:block>
+                                </div>
                             </div>
                         </div>
                     </div>
