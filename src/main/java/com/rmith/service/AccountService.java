@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author Teo-Em
  */
-public interface AccountService {
+    public interface AccountService {
     
     List<AccountDTO> getListAccount();
     

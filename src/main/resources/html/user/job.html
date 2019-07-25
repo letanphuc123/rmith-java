@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" data-layout-decorate="~{layout}">
+    <head>
+        <title>Job | Rmith</title>
+        <th:block layout:fragment="css"></th:block>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div id="block_loadding"></div>
+            <div class="row bheading-title">
+                <!-- Breadcrumb -->
+                <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                    <ol class="breadcrumb">
+                        <li class="active">
+                            <span th:text="job"></span>
+                        </li>
+                    </ol>
+                </div>
+                <!-- /Breadcrumb -->
+
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 text-right">
+                    <h5 class="txt--dark" th:text="job"></h5>
+                </div>
+            </div>    
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default border-panel card-view">
+                        <div class="panel-heading">
+                            <h6 class="panel-captilize txt--dark" th:text="job"></h6>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-wrapper collapse in">
+                            <div class="panel-body">
+                                <div class="table-wrap">
+                                    <th:block th:if="${jobDTOList != null && #lists.size(jobDTOList) > 0}">
+                                        <div id="divAccountWaiting">
+<!--                                            <div class="loading-page loading-box">
+                                                <div class="loading-center--absolute">
+                                                    <div class="object object--one"></div>
+                                                    <div class="object object--two"></div>
+                                                    <div class="object object--three"></div>
+                                                </div>
+                                            </div>-->
+                                        </div>
+
+                                        <table id="tbl_account" class="table table-hover table-bordered display font--14" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th th:text="${'companyName'}"></th>
+                                                    <th th:text="${'address'}"></th>
+                                                    <th th:text="${'time'}"></th>
+                                                    <th th:text="${'numberEmp'}"></th>
+                                                    <th th:text="${'date'}"></th>
+                                                    <th th:text="${'nationality'}"></th>
+                                                    <th th:text="${'description'}"></th>
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="item : ${jobDTOList}">
+                                                    <td th:text="${item.companyName}"> </td>
+                                                    <td th:text="|${item.address}" > </td>
+                                                    <td th:text="${item.time}"></td>
+                                                    <td th:text="${item.numberEmp}"> </td>
+                                                    <td th:text="|${item.date}" > </td>
+                                                    <td th:text="${item.nationality}"></td>
+                                                    <td th:text="${item.desription}"></td>
+                                                    
+                                               
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </th:block>
+                                    <th:block th:unless="${jobDTOList != null && #lists.size(jobDTOList) > 0}">
+                                        <!-- Show no data -->
+                                        <div class="no-data text-center">
+                                            <span class="text-center nonecase-font block error-comment" th:text="${'No data'}"></span>
+                                            <p class="text-center mb--10" > 
+                                                <span th:text="${'List job is empty. Please click '}"></span>
+                                                <a th:href="@{/new-job}" class="txt--blue weight--600" th:text="${'here'}"></a> </p>
+                                        </div>
+                                        <!--End No data-->
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <th:block layout:fragment="scripts">
+    </th:block>
+</html>

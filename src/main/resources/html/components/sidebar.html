@@ -16,7 +16,7 @@
                 </li>
 
                 <li>
-                    <a  href="javascript:void(0);" data-toggle="collapse" data-th-attr="data-target='#' + ${'setting'} + '_dr'">  
+                    <a  href="javascript:void(0);" data-toggle="collapse" data-th-attr="data-target='#' + ${'job'} + '_dr'">  
                         <div class="pull-left">
                             <i th:class="${'fa fa-user mr--10'}"></i>
                             <span class="right-nav-text" th:text="${'Setting'}"></span>
@@ -26,13 +26,13 @@
                         </div>
                         <div class="clearfix"></div>
                     </a>
-                    <ul th:id="${'setting'} + '_dr'" class="collapse collapse-level-1">
+                    <ul th:id="${'job'} + '_dr'" class="collapse collapse-level-1">
                         <script>
-                            document.querySelector("a[data-target='#setting_dr']").classList.add("active");
+                            document.querySelector("a[data-target='#job_dr']").classList.add("active");
                         </script>
                         <li>
-                            <a class="active" th:href="@{'/' + ${'account'}}">
-                                <span th:text="${'Account'}"></span> 
+                            <a class="active" th:href="@{'/' + ${'job'}}">
+                                <span th:text="${'Job'}"></span> 
                             </a>
                         </li>
                         <li>
