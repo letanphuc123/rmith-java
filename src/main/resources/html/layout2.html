@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html th:lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+        <title>Layout Page 2</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="shortcut icon" th:href="@{/static/img/favicon_mieruca_32x32.ico}" href="" />
+        <!-- Bootstrap-select -->
+        <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-select/bootstrap-select.css}" href="" type="text/css" />
+        <!-- CSS Core -->
+        <link rel="stylesheet" th:href="@{/static/css/component.css}" href="" type="text/css" />
+        <link rel="stylesheet" th:href="@{/static/css/template.css}" href="" type="text/css" />
+        <!-- Custom CSS here -->
+        <link rel="stylesheet" th:href="@{/static/plugins/sweet-alert/sweetalert.css}" href="" type="text/css" />
+        <link rel="stylesheet" th:href="@{/static/css/custom.css}" href="../static/css/custom.css" type="text/css" />
+        <th:block layout:fragment="css" th:remove="all"></th:block>
+    </head>
+    <body class="box-layout">
+        <!--Preloader-->
+        <div class="load-page">
+            <div class="loading"></div>
+        </div>
+        <!--/Preloader-->
+        <!-- Display menu horizontal add more class horizontal-nav  in wrapper -->
+        <div class="wrapper">
+            <!--Flag-->
+            <div class="flag_layout2">
+                <select id="changeLanguageByCookie" class="selectpicker">
+                    <option value="JA" data-icon="flat_googlecojp" selected="">Japanese</option>
+                    <option value="EN" data-icon="flat_googlecom">English</option>
+                    <option value="VI" data-icon="flat_googlecomvn">Vietnamese</option>
+                </select>
+            </div>
+            <!--End flag-->
+            <!-- Main Content -->
+            <div layout:fragment="content">
+                Page content goes here
+            </div>
+            <!-- /Main Content -->
+        </div>
+        <!--Include JS Core-->
+        <!-- jQuery -->
+        <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
+        <!-- Bootstrap Core JavaScript -->
+        <script type="text/javascript" th:src="@{/static/js/bootstrap.min.js}"></script>
+        <!-- Bootstrap-select -->
+        <script type="text/javascript" th:src="@{/static/plugins/bootstrap-select/bootstrap-select.js}"></script>
+        <!-- Slimscroll JavaScript -->
+        <script type="text/javascript" th:src="@{/static/js/jquery.slimscroll.js}"></script>
+        <!-- Init JavaScript -->
+        <script type="text/javascript" th:src="@{/static/js/init.js}"></script>
+        <script type="text/javascript" th:src="@{/static/plugins/jquery.validate/jquery.validate.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/plugins/sweet-alert/sweetalert.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/js/custom.js}"></script>
+        <th:block layout:fragment="scripts"></th:block>
+    </body>
+</html>

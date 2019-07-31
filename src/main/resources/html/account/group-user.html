@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<!-- Author : Nguyen Thanh Huy -->
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{layout}">
+    <head>
+        <title>Group User</title>
+        <th:block layout:fragment="css">
+            <link th:href="@{/static/plugins/data-table/jquery.dataTables.min.css}" href="" rel="stylesheet" type="text/css" />
+        </th:block>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="row bheading-title">
+                <!-- Breadcrumb -->
+                <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                    <ol class="breadcrumb">
+                        <li><a th:href="@{/dashboard}" th:text="${language.get('lb_dashboard')?:'Dashboard'}"></a></li>
+                        <li class="active">
+                            <span th:text="${language.get('lb_breadcrumb_group_user')?:'Group User'}"></span>
+                        </li>
+                    </ol>
+                </div>
+                <!-- /Breadcrumb -->
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 text-right">
+                    <h5 class="txt--dark" th:text="${language.get('lb_dashboard_page')?:'Dashboard'}"></h5>
+                </div>
+            </div>        
+            <div class="row mt-10">
+                <div id="divBlockGroupUserWaiting"></div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="panel panel-default border-panel card-view">
+                        <div class="panel-heading">
+                            <div class="pull-right">
+                                <button class="btn btn--navyblue btn--xs" data-toggle="modal" data-target="#myModalGroup" id="btnAdd" th:text="${language.get('lb_button_add')?:'Add Group'}"></button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-wrapper collapse in">
+                            <div class="panel-body">
+                                <div class="table-wrap" >
+                                    <th:block th:if="${groupUserDTOList != null and (#lists.size(groupUserDTOList) > 0)}">
+                                        <div id="divGroupUserWaiting">
+                                            <div class="loading-page loading-box">
+                                                <div class="loading-center--absolute">
+                                                    <div class="object object--one"></div>
+                                                    <div class="object object--two"></div>
+                                                    <div class="object object--three"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <table id="tblGroupUser" class="table table-hover table-bordered display font--14" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th th:text="${language.get('lb_table_name')?:'Group Name'}"></th>
+                                                    <th th:text="${language.get('lb_table_type')?:'Group Type'}"></th>
+                                                    <th class="text--right" th:text="${language.get('lb_table_number')?:'NUMBER USER'}"></th>
+                                                    <th class="text-right" th:text="${language.get('lb_table_updated_date')?:'Updated date'}"></th>
+                                                    <th class="text-center list-staff--action" th:text="${language.get('lb_table_action')?:'Action'}"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="item : ${groupUserDTOList}">
+                                                    <td class="tbl-truncate">
+                                                        <div class="row--truncate" th:text="${item.groupName}"></div>
+                                                    </td>
+                                                    <td th:class="${item.isAdminGroup} == 1 ? 'txt--navyblue' : (${item.isFreeGroup} == 1 ? 'txt--success' : '')">
+                                                        <span th:text="${item.isAdminGroup} == 1 ? 'ADMIN' : (${item.isFreeGroup} == 1 ? 'FREE' : '')"></span>
+                                                    </td>
+                                                    <td class="text--right" th:text="${item.numberUser}"></td>
+                                                    <td class="text--right" th:utext="${#strings.replace(item.updated,' ','<br/>')} "></td>
+                                                    <td class="text--left dt-nowrap">
+                                                        <a href="#divPermission" class="btn btn__table btn--navyblue txtPermission" data-placement="left" data-tooltip="tooltip"
+                                                           th:attr="data-id=${item.groupId ?:' '},data-name=${item.groupName ?:' '}, data-permission=${item.permission ?:' '}, data-original-title=${language.get('lb_action_permission')?:'Permission'}"
+                                                           th:attrappend="data-is-admin-group=${item.isAdminGroup}" data-is-admin-group=""><i class="fa fa-key"></i></a>
+                                                        <a class="btn btn__table btn--warning btnEdit" title="" data-toggle="modal" data-target="#myModalGroup" data-placement="left" data-tooltip="tooltip"
+                                                           th:attr="data-id=${item.groupId ?:' '}, data-is-admin=${item.isAdminGroup ?: '0'}, data-is-free=${item.isFreeGroup ?: '0'}, data-name=${item.groupName ?:' '}, data-original-title=${language.get('lb_action_edit')?:'Edit'}" >
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+                                                        <th:block th:if="${item.isFreeGroup == 0 and (item.numberUser == 0)}">
+                                                            <a class="btn btn__table btn--danger btnDelete" title="" data-toggle="modal" data-placement="left" data-tooltip="tooltip" 
+                                                               th:attr="free=${item.isFreeGroup ?: ' '},data-id=${item.groupId ?: ' '},data-name=${item.groupName?:' '}, data-original-title=${language.get('lb_action_delete')?:'Delete'}">
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>
+                                                        </th:block>
+                                                        <th:block th:unless="${item.isFreeGroup == 0 and (item.numberUser == 0)}">                                                           
+                                                            <a class="btn btn__table btn--disabled" disabled>
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>
+                                                        </th:block>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </th:block>
+                                    <th:block th:unless="${groupUserDTOList != null and (#lists.size(groupUserDTOList) > 0)}">
+                                        <!-- Show no data -->
+                                        <div class="no-data text-center">
+                                            <img th:src="@{/static/img/no-data.svg}"/>
+                                            <span class="text-center nonecase-font block error-comment" th:text="${language.get('lb_no_data')?:'No data'}"></span>
+                                            <p class="text-center mb--10">
+                                                <span th:text="${language.get('lb_panel_group_user_is_empty')?:'Group user list is empty. Please click'} "></span>
+                                                <a href="javascript:void(0);" class="txt--blue weight--600" data-toggle="modal" data-target="#myModalGroup" th:text="${language.get('lb_panel_here')?:'here'}"></a> 
+                                                <span th:text="${language.get('lb_panel_setup')?:'to add group user.'}"></span>
+                                            </p>
+                                        </div>
+                                        <!--End No data-->
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-10 hidden" id="divPermission">
+                <div id="divBlockPermisionWaiting"></div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="panel panel-default border-panel card-view">
+                        <div class="panel-heading">
+                            <div class="pull-left">
+                                <p class="txt-dark"> <span th:text="${language.get('lb_permission_current_name')?:'Current Group'}"></span> : <span id="txtCurrentGroup"></span></p>
+                            </div>
+                            <div class="pull-right">
+                                <form id="frmPermission" th:attr="action=@{/update-permission}" method="POST" >
+                                    <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+                                    <input name="permission" type="hidden" />
+                                    <input name="groupId" type="hidden" />
+                                    <button class="hidden">Save</button>
+                                </form>
+                                <button class="btn btn--navyblue btn--xs" id="btnPermission" th:text="${language.get('lb_permission_button_save')?:'Save'}"></button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-wrapper collapse in">
+                            <div class="panel-body">
+                                <div class="table-wrap">
+                                    <th:block th:if="${(permissionDTOList != null and #lists.size(permissionDTOList) != 0)}">
+                                        <div id="divPermissionWaiting">
+                                            <div class="loading-page loading-box">
+                                                <div class="loading-center--absolute">
+                                                    <div class="object object--one"></div>
+                                                    <div class="object object--two"></div>
+                                                    <div class="object object--three"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <table id="tblGroupUserPermission" class="table table-hover table-bordered display font--14 mb--15" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th th:text="${language.get('lb_permission_menu')?:'Menu Name'}"></th>
+                                                    <th th:text="${language.get('lb_permission_category')?:'Category Name'}"></th>
+                                                    <th th:text="${language.get('lb_permission_module')?:'Module Name'}"></th>
+                                                    <th class="w--115 txt--center" th:text="${language.get('lb_permission_is_view')?:'Is View'}"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbPermission">
+                                                <tr th:each="item : ${permissionDTOList}">
+                                                    <td><span th:classappend="${item.menuCode == 'administrator'} ? 'adminGroup'" th:text="|${language.get('lb_permission_tbody_menu')?:'Menu'}: ${item.menuName}|"></span></td>
+                                                    <td><b th:classappend="${item.menuCode == 'administrator'} ? 'adminGroup'" th:text="|${language.get('lb_permission_tbody_category')?:'Category'}: ${item.categoryName}|"></b></td>
+                                                    <th:block th:if="${item.menuCode == 'organization-agency'}">
+                                                        <td th:text="${item.moduleName}"></td>
+                                                        <td class="text-center">
+                                                            <div class="checkbox">
+                                                                <input id="checkbox_2" required="" type="checkbox" checked disabled th:attr="data-id=${item.moduleCode ?: ' '}"/>
+                                                                <label th:for="'checkbox_' + ${itemStat.index}"></label>
+                                                            </div>
+                                                        </td> 
+                                                    </th:block>
+                                                    <th:block th:unless="${item.menuCode == 'organization-agency'}">
+                                                        <td ><span th:classappend="${item.menuCode == 'administrator'} ? 'adminGroup'" th:text="${item.moduleName}"></span></td>
+                                                        <td class="text-center">
+                                                            <div class="checkbox" th:classappend="${item.menuCode == 'administrator'} ? 'adminGroup'">
+                                                                <input id="checkbox_2" required="" type="checkbox" th:attr="data-id=${item.moduleCode ?: ' '}"/>
+                                                                <label th:for="'checkbox_' + ${itemStat.index}"></label>
+                                                            </div>
+                                                        </td>
+                                                    </th:block>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </th:block>
+                                    <th:block th:unless="${(permissionDTOList != null and #lists.size(permissionDTOList) != 0)}">
+                                        <!-- Show no data -->
+                                        <div class="no-data text-center">
+                                            <img th:src="@{/static/img/no-data.svg}"/>
+                                            <span class="text-center nonecase-font block error-comment" th:text="${language.get('lb_no_data_permission')?:'No data'}"></span>
+                                            <p class="text-center mb--10" th:text="${language.get('lb_empty')?:'List permision group user is empty!'}"></p>
+                                        </div>
+                                        <!--End No data-->
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <!--Modal Add Group-->
+            <div id="myModalGroup" class="modal fade modal-center" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form th:attr="action=@{/add-group-user}" method="post" id="frmAddNewGroup">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <input type="hidden" name="groupId" id="txtGroupId" value=""/>
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h5 class="modal-title" id="myModalLabel" th:text="${language.get('lb_popup_add_group')?:'Add Group'}"></h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label class="control-label text-left" th:text="${language.get('lb_popup_name')?:'Group Name'}"></label>
+                                    <input type="text" name="groupName" class="form-control" th:value=" ${(updateGroupUserDTO != null)? updateGroupUserDTO.groupName : ''}" autocomplete="off"/>
+                                </div>
+                                <div id="div_chk_is_admin" class="checkbox block">
+                                    <input type="checkbox" name="isAdminGroup" id="chkIsAdminGroup" value="0" />
+                                    <label for="chkIsAdminGroup" th:text="${language.get('lb_popup_add_isadmingroup')?:'Is Admin Group'}"></label>
+                                </div>
+                                <th:block th:if="${isExistFreeGroup}">
+                                    <input type="hidden" name="isFreeGroup" id="chkIsFreeGroup" value="0" />
+                                </th:block>
+                                <th:block th:unless="${isExistFreeGroup}">
+                                    <div class="checkbox block">
+                                        <input type="checkbox" name="isFreeGroup" id="chkIsFreeGroup" value="0" />
+                                        <label for="chkIsFreeGroup" th:text="${language.get('lb_popup_add_isfreegroup')?:'Is Free Group'}"></label>
+                                        <a href="#" tabindex="0" data-placement="top" data-toggle="popover" data-trigger="focus" title="" 
+                                           th:attr="data-content=${language.get('lb_popup_add_isfreegroup_note')?: 'Free group is only created once and can not be deleted, users will use it to register accounts'}"><i class="txt--blue fa fa-question-circle" aria-hidden="true"></i></a>
+                                    </div>
+                                </th:block>
+
+                            </div>
+                            <div class="modal-footer">
+                                <input type="submit" th:value="${language.get('lb_button_save') ?:'Save'}" class="btn btn--xs btn--navyblue"/>
+                                <button type="button" class="btn btn--default btn--xs" data-dismiss="modal" th:text="${(language.get('lb_button_close')?:'Close')}"></button>
+                            </div>
+                        </form> 
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+            <!--Form Delete Group-->
+            <form th:attr="action=@{/delete-group-user}" method="POST" id="frmDelete" class="hidden" >
+                <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input name="groupId"/>
+                <input type="submit" value="Save"/>
+            </form>
+            <!--Modal Edit Group-->
+            <input type="hidden" id="txtSessionLanguage" th:value="${session.language}"/>
+        </div>
+
+
+        <th:block layout:fragment="scripts">
+            <script th:src="@{'/static/plugins/jquery.validate/localization/validate-' + ${session.language} + '.js'}" src=""></script>
+            <!-- DataTable JavaScript -->
+            <script th:src="@{/static/plugins/data-table/jquery.dataTables.min.js}" type="text/javascript"></script>
+            <script>
+                $(document).ready(function () {
+                    $("#frmAddNewGroup").validate({
+                        errorElement: 'span', //default input error message container
+                        errorClass: 'txt--error font--12 mt--5', // default input error message class
+                        focusInvalid: false, // do not focus the last invalid input
+                        rules: {
+                            "groupName": {
+                                required: true
+                            }
+                        },
+                        highlight: function (element) { // hightlight error inputs
+                            $(element).closest('.form-group').addClass('has--error'); // set error class to the control group
+                        },
+                        unhighlight: function (element) { // revert the change done by hightlight
+                            $(element).closest('.form-group').removeClass('has--error'); // set error class to the control group
+                        },
+                        success: function (label) {
+                            label.closest('.form-group').removeClass('has--error'); // set success class to the control group
+                        },
+                        submitHandler: function () {
+                            $(".close").click();
+                            showWait("#divBlockGroupUserWaiting");
+                            e.preventDefault();
+                            return true;
+                        }
+                    });
+
+                    checkOnlyOne();
+
+                    $('#tblGroupUser').on("click", '.btnEdit', function () {
+                        $("#txtGroupId").attr("name", "groupId");
+                        $("#frmAddNewGroup").attr("action", "[[@{/update-group-user}]]");
+                        $("#frmAddNewGroup input[name='groupName']").val($(this).attr('data-name'));
+                        $("#frmAddNewGroup input[name='groupId']").val($(this).attr('data-id'));
+
+                        // if this group is free, hide checkbox is admin, otherwise show and set value is admin
+                        if ($(this).attr('data-is-free') === "1") {
+                            $("#div_chk_is_admin").addClass("display--none");
+                        } else {
+                            $("#div_chk_is_admin").removeClass("display--none");
+                        }
+                        $("#chkIsFreeGroup").val($(this).attr('data-is-free'));
+                        if ($(this).attr('data-is-admin') === "1") {
+                            $("#chkIsAdminGroup").prop("checked", true);
+                        }
+                        $("#chkIsAdminGroup").val($(this).attr('data-is-admin'));
+                    });
+
+                    $('#btnAdd').click(function () {
+                        $("#frmAddNewGroup input[name='groupName']").val("");
+                        $("#txtGroupId").attr("name", "");
+                        $("#frmAddNewGroup").attr("action", "[[@{/add-group-user}]]");
+                    });
+
+                    $('#tblGroupUser').on('click', '.txtPermission', function () {
+                        if ($(this).attr('data-is-admin-group') != 1) {
+                            $('.adminGroup').parent().addClass('hide');
+                        } else {
+                            $('.adminGroup').parent().removeClass('hide');
+                        }
+                        $("#tbPermission input").each(function () {
+                            $(this).prop("checked", false);
+                        });
+                        $("#frmPermission input[name='groupId']").val($(this).attr('data-id'));
+                        var listPermission = $(this).attr('data-permission').split(",");
+                        $("#divPermission").removeClass("hidden");
+                        $("#txtCurrentGroup").text($(this).attr('data-name'));
+                        $("#tbPermission input").each(function () {
+                            if (listPermission.indexOf($(this).attr('data-id')) !== -1) {
+                                $(this).prop("checked", true);
+                            }
+                        });
+                        //auto check organization-agency permission
+                        $("#tbPermission input[disabled]").each(function () {
+                            $(this).prop("checked", true);
+                        });
+                        $('html, body').animate({scrollTop: $('#divPermission').offset().top - 130}, 'slow');
+                    });
+                    $('.btnDelete').on('click', function (e) {
+                        $("#frmDelete input[name='groupId']").val($(this).attr('data-id'));
+                        showAlertDelete("[[${(language.get('lb_delete_alert')?:'Are you sure?')}]]",
+                                "deleteGroup();",
+                                "[[${(language.get('lb_delete_alert_content')?:'You can not recover it after delete successfully!')}]]",
+                                "[[${(language.get('lb_delete_alert_yes')?:'Yes')}]]",
+                                "[[${(language.get('lb_delete_alert_cancel')?:'Cancel')}]]");
+                    });
+                    var sessionLanguage = $("#txtSessionLanguage").val().length > 0 ? $("#txtSessionLanguage").val().toLowerCase() : "ja";
+                    $('#tblGroupUser').DataTable({
+                        "language": {
+                            "url": "[(@{/static/plugins/data-table/languages/datatable-" + sessionLanguage + ".json})]"
+                        },
+                        "lengthMenu": [
+                            [25, 50, 100, -1], [25, 50, 100, "[[${language.get('lb_select_all')?:'All'}]]"]
+                        ],
+                        "scrollX": true,
+                        "order": [
+                            [1, "desc"]
+                        ],
+                        "columnDefs": [
+                            {"width": 100, className: "dt-center", "targets": [1]},
+                            {"width": 100, "targets": [2]},
+                            {"width": 100, "targets": [3]},
+                            {"width": 80, "targets": [4]},
+                            {"orderable": false, "targets": [4]}
+                        ],
+                        "initComplete": function () {
+                            hideWait("#divGroupUserWaiting");
+                        }
+                    });
+                    var table = $('#tblGroupUserPermission').DataTable({
+                        "lengthMenu": [
+                            [25, 50, 100, -1], [25, 50, 100, "All"]
+                        ],
+                        "searching": false,
+                        "paging": false,
+                        "info": false,
+                        "columnDefs": [{"visible": false, "targets": 0}, {"visible": false, "targets": 1}],
+                        "order": [
+                            [0, 'asc'], [1, 'asc']
+                        ],
+                        "displayLength": 25,
+                        "stripeClasses": ['odd-row', 'even-row'],
+                        "drawCallback": function (settings) {
+                            var api = this.api();
+                            var rows = api.rows({page: 'current'}).nodes();
+                            var last = null;
+                            var lastC = null;
+                            api.column(0, {page: 'current'}).data().each(function (group, i) {
+                                if (last !== group) {
+                                    $(rows).eq(i).before(
+                                            '<tr class="group"><td colspan="5">' + group + '</td></tr>'
+                                            );
+                                    last = group;
+                                }
+                            });
+                            api.column(1, {page: 'current'}).data().each(function (group, i) {
+                                if (lastC !== group) {
+                                    $(rows).eq(i).before(
+                                            '<tr class="groupCategory"><td colspan="5">' + group + '</td></tr>'
+                                            );
+                                    lastC = group;
+                                }
+                            });
+                        },
+                        "initComplete": function () {
+                            hideWait("#divPermissionWaiting");
+                        }
+                    });
+                    // Order by the grouping
+                    $('#tblGroupUserPermission tbody').on('click', 'tr.group', function () {
+                        var currentOrder = table.order()[0];
+                        if (currentOrder[0] === 0 && currentOrder[1] === 'asc') {
+                            table.order([0, 'desc']).draw();
+                        } else {
+                            table.order([0, 'asc']).draw();
+                        }
+                    });
+                    $('#btnPermission').click(function () {
+                        var permission = "";
+                        $("#tbPermission input").each(function () {
+                            if ($(this).is(':checked')) {
+                                permission += $(this).attr('data-id') + ",";
+                            }
+                        });
+                        $("#frmPermission input[name='permission']").val(permission);
+                        showWait("#divBlockPermisionWaiting");
+                        $("#frmPermission").submit();
+                    });
+                });
+
+                var checkOnlyOne = function () {
+                    $("#chkIsAdminGroup").change(function () {
+                        if ($("#chkIsAdminGroup").is(':checked')) {
+                            $("#chkIsAdminGroup").val(1);
+
+                            $("#chkIsFreeGroup").val(0);
+                            $("#chkIsFreeGroup").prop("checked", false);
+                        } else {
+                            $("#chkIsAdminGroup").val(0);
+                        }
+                    });
+
+                    $("#chkIsFreeGroup").change(function () {
+                        if ($("#chkIsFreeGroup").is(':checked')) {
+                            $("#chkIsFreeGroup").val(1);
+
+                            $("#chkIsAdminGroup").val(0);
+                            $("#chkIsAdminGroup").prop("checked", false);
+                        } else {
+                            $("#chkIsFreeGroup").val(0);
+                        }
+                    });
+                };
+
+                var deleteGroup = function () {
+                    showWait("#divBlockGroupUserWaiting");
+                    $("#frmDelete").submit();
+                };
+            </script>
+            <!-- Delete Group -->
+            <th:block th:if="${deteteSuccess != null}">
+                <script>
+                    showAlert("[[${(language.get('lb_alert_success')?:'Successful!')}]]", "[[${(language.get('lb_delete_success')?:'Delete group successfully!')}]]", "success");
+                </script>
+            </th:block>
+
+            <th:block th:if="${groupHasAccount != null}">
+                <script>
+                    showAlert("[[${(language.get('lb_alert_warning')?:'Warning!')}]]", "[[${(language.get('lb_alert_group_had_account')?:'Can not delete! This group is containing accounts.')}]]", "warning");
+                </script>
+            </th:block>
+            <th:block th:if="${deleteError != null}">
+                <script>
+                    showAlert("[[${(language.get('lb_alert_error')?:'Error!')}]]", "[[${(language.get('lb_error')?:'An error has occurred! Please try again later.')}]]", "error");
+                </script>
+            </th:block>
+            <!-- Update Group -->
+            <th:block th:if="${updateGroupUserDTO != null}">
+                <script>
+                    $('#myModalGroup').modal('show');
+                </script>
+            </th:block>
+            <th:block th:if="${updateSuccess != null}">
+                <script>
+                    showAlert("[[${(language.get('lb_alert_success')?:'Successful!')}]]", "[[${(language.get('lb_update_success')?:'Update group successfully!')}]]", "success");
+                </script>
+            </th:block>
+            <th:block th:if="${updateError != null}">
+                <script>
+                    showAlert("[[${(language.get('lb_alert_error')?:'Error!')}]]", "[[${(language.get('lb_error')?:'An error has occurred! Please try again later.')}]]", "error");
+                </script>
+            </th:block>
+            <!-- Add Group -->
+            <th:block th:if="${addSuccess != null}">
+                <script>
+                    showAlert("[[${(language.get('lb_alert_success')?:'Successful!')}]]", "[[${(language.get('lb_add_success')?:'Add group successfully!')}]]", "success");
+                </script>
+            </th:block>
+            <th:block th:if="${addError != null}">
+                <script>
+                    showAlert("[[${(language.get('lb_alert_error')?:'Error!')}]]", "[[${(language.get('lb_error')?:'An error has occurred! Please try again later.')}]]", "error");
+                </script>
+            </th:block>
+            <!-- Permission Group -->
+            <th:block th:if="${permissionSuccess != null}">
+                <script>
+                    showAlert("[[${(language.get('lb_alert_success')?:'Successful!')}]]", "[[${(language.get('lb_set_permission_success')?:'Set group permission successfully!')}]]", "success");
+                </script>
+            </th:block>
+            <th:block th:if="${permissionError != null}">
+                <script>
+                    showAlert("[[${(language.get('lb_alert_error')?:'Error!')}]]", "[[${(language.get('lb_error')?:'An error has occurred! Please try again later.')}]]", "error");
+                </script>
+            </th:block>
+        </th:block>
+    </body>
+</html>

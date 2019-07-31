@@ -882,9 +882,6 @@ code {
 .bg-fafafa {
     background: #fafafa !important;
 }
-.bg--transparent {
-    background: transparent !important;
-}
 /*=============================================
 =            Text color CSS          =
 =============================================*/
@@ -953,7 +950,7 @@ code {
 }
 
 .txt--orange {
-    color: #e7711b !important;
+    color: #ff6028 !important;
 }
 .txt--navyblue{
     color: #4285f4 !important;
@@ -987,12 +984,6 @@ code {
 .has--error{border-color: rgba(248, 63, 55, 0.5)!important;}
 .fill--grey {
     fill: #727272;
-}
-.txt--underline {
-    text-decoration: underline;
-}
-.txt--uppercase {
-    text-transform: uppercase;
 }
 /*=============================================
 =            Font size CSS            =
@@ -1123,15 +1114,13 @@ code {
     display: -ms-flexbox ;
     display: flex ;
 }
-.flex-wrap{
-    flex-wrap: wrap;
-    flex-direction: row;
-}
+
 .flex-middle {
     -webkit-box-align: center !important;
     -ms-flex-align: center !important;
     align-items: center !important;
 }
+
 .space--between{
     justify-content: space-between;
 }
@@ -1152,6 +1141,7 @@ code {
     flex:0 0 100px;
 
 }
+
 .table-struct {
     display: table !important;
 }
@@ -1197,7 +1187,7 @@ code {
     width: 100px !important;
 }
 .w--105{
-    width: 105px !important;
+    width: 150px !important;
 }
 .w--115{
     width: 115px !important;
@@ -1213,9 +1203,6 @@ code {
 }
 .w--140{
     width: 140px !important;
-}
-.w--150{
-    width: 150px !important;
 }
 .w--200{
     width: 200px !important; 
@@ -1238,6 +1225,9 @@ code {
 .w--800{
     width: 800px !important; 
 }
+.max-w300{
+    max-width: 300px!important;
+}
 .auto-width {
     width: auto !important;
 }
@@ -1257,7 +1247,7 @@ code {
     height: 120px !important;
 }
 .height--600 {
-    height: 600px !important;
+    height: 600px;
 }
 .height--400 {
     height: 400px !important;
@@ -1321,6 +1311,8 @@ code {
     overflow: hidden;
     text-overflow: ellipsis;
     height: 104px;
+    max-width: 200px;
+    min-width: 100%;
 }
 .line-clamp{
     display: -webkit-box;
@@ -1736,7 +1728,6 @@ hr {
     padding: 0px;
     line-height: 25px;
 }
-
 /*=============================================
 =            Checkbox CSS            =
 =============================================*/
@@ -1768,14 +1759,12 @@ hr {
 }
 .radio label::before {
     content: "";
-    cursor: pointer;
     display: inline-block;
     position: absolute;
     width: 17px;
     height: 17px;
     left: 0;
     top: 2px;
-    z-index: 5;
     margin-left: -20px;
     border: 1px solid #cccccc;
     border-radius: 50%;
@@ -1790,7 +1779,6 @@ hr {
 .radio label::after {
     display: inline-block;
     position: absolute;
-    z-index: 6;
     content: " ";
     width: 11px;
     height: 11px;
@@ -2294,14 +2282,8 @@ textarea {
     opacity: .65;
 }
 .box-shadow-none {
-    box-shadow: none!important;
+    box-shadow: none;
 }
 .nowrap {
     white-space: nowrap !important;
-}
-.max-w300 {
-    max-width: 300px!important;
-}
-.max-w600 {
-    max-width: 600px!important;
 }

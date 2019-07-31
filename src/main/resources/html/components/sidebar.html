@@ -6,79 +6,56 @@
         <div id="div_sitebar" class="fixed-sidebar-left">
             <ul class="nav navbar-nav side-nav nicescroll-bar">
                 <li>
-                    <a th:class="${'active'}" th:href="@{/dashboard}" data-toggle="collapse">
+                    <a th:class="${menuModule} == 'dashboard'? 'active' : ''" th:href="@{/dashboard}" data-toggle="collapse" data-target="#dashboard_dr">
                         <div class="pull-left">
                             <i class="fa fa-tachometer mr--10"></i>
-                            <span class="right-nav-text" th:text="${'Dashboard'}"></span>
+                            <span class="right-nav-text" th:text="${language?.get('dashboard') ?: 'Dashboard'}"></span>
                         </div>
                         <div class="clearfix"></div>
                     </a>
                 </li>
 
-                <li>
-                    <a  href="javascript:void(0);" data-toggle="collapse" data-th-attr="data-target='#' + ${'setting'} + '_dr'">  
-                        <div class="pull-left">
-                            <i th:class="${'fa fa-user mr--10'}"></i>
-                            <span class="right-nav-text" th:text="${'Setting'}"></span>
-                        </div>
-                        <div class="pull-right ml--5">
-                            <i class="fa fa-angle-down"></i>
-                        </div>
-                        <div class="clearfix"></div>
-                    </a>
-                    <ul th:id="${'setting'} + '_dr'" class="collapse collapse-level-1">
-                        <script>
-                            document.querySelector("a[data-target='#setting_dr']").classList.add("active");
-                        </script>
-                        <li>
-                            <a class="active" th:href="@{'/' + ${'account'}}">
-                                <span th:text="${'Account'}"></span> 
-                            </a>
-                        </li>
-                        <li>
-                            <a class="active" th:href="@{'/' + ${'account'}}">
-                                <span th:text="${'Package'}"></span> 
-                            </a>
-                        </li>
-                        <li>
-                            <a class="active" th:href="@{'/' + ${'account'}}">
-                                <span th:text="${'Group'}"></span> 
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a  href="javascript:void(0);" data-toggle="collapse" data-th-attr="data-target='#' + ${'other'} + '_dr'">  
-                        <div class="pull-left">
-                            <i th:class="${'fa fa-user mr--10'}"></i>
-                            <span class="right-nav-text" th:text="${'Other'}"></span>
-                        </div>
-                        <div class="pull-right ml--5">
-                            <i class="fa fa-angle-down"></i>
-                        </div>
-                        <div class="clearfix"></div>
-                    </a>
-                    <ul th:id="${'other'} + '_dr'" class="collapse collapse-level-1">
-                        <script>
-                            document.querySelector("a[data-target='#setting_dr']").classList.add("active");
-                        </script>
-                        <li>
-                            <a class="active" th:href="@{'/' + ${'account'}}">
-                                <span th:text="${'Account'}"></span> 
-                            </a>
-                        </li>
-                        <li>
-                            <a class="active" th:href="@{'/' + ${'account'}}">
-                                <span th:text="${'Package'}"></span> 
-                            </a>
-                        </li>
-                        <li>
-                            <a class="active" th:href="@{'/' + ${'account'}}">
-                                <span th:text="${'Group'}"></span> 
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                <th:block th:each="itemCategory : ${listCategory}">
+                    <li>
+                        <a  href="javascript:void(0);" data-toggle="collapse" data-th-attr="data-target='#' + ${itemCategory.categoryCode} + '_dr'">  
+                            <div class="pull-left">
+                                <i th:class="'fa ' + ${itemCategory?.icon} + ' mr--10'"></i>
+                                <span class="right-nav-text" th:text="${language.get(itemCategory.categoryCode)?:itemCategory.categoryName}"></span>
+                            </div>
+                            <div class="pull-right ml--5">
+                                <i class="fa fa-angle-down"></i>
+                            </div>
+                            <div class="clearfix"></div>
+                        </a>
+                        <ul th:id="${itemCategory.categoryCode} + '_dr'" class="collapse collapse-level-1">
+                            <th:block th:each="itemModule : ${itemCategory.listModule}">
+                                <th:block th:if="${itemModule.moduleCode == menuModule}">
+                                    <script>
+                                        document.querySelector("a[data-target='#[[${itemCategory.categoryCode}]]_dr']").classList.add("active");
+                                    </script>
+                                    <li>
+                                        <a class="active" th:href="@{'/' + ${itemModule.moduleCode}}">
+                                            <span th:text="${language.get(itemModule.moduleCode)?:itemModule.moduleName}"></span> 
+                                            <th:block th:if="${itemModule.isBeta == 1}">
+                                                <label class="badge badge--danger badge--sm mt--5 pull-right font--10">Beta</label>
+                                            </th:block>
+                                        </a>
+                                    </li>
+                                </th:block>
+                                <th:block th:unless="${itemModule.moduleCode == menuModule}">
+                                    <li>
+                                        <a th:href="@{'/' + ${itemModule.moduleCode}}">
+                                            <span th:text="${language.get(itemModule.moduleCode)?:itemModule.moduleName}"></span>
+                                            <th:block th:if="${itemModule.isBeta == 1}">
+                                                <label class="badge badge--danger badge--sm mt--5 pull-right font--10">Beta</label>
+                                            </th:block>
+                                        </a>
+                                    </li>
+                                </th:block>
+                            </th:block>
+                        </ul>
+                    </li>
+                </th:block>
             </ul>
         </div>
     </body>

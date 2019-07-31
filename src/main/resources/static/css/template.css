@@ -435,7 +435,6 @@ body.box-layout {
     position: relative;
     border-radius: 0;
     margin: 0;
-    margin-left: 305px  !important;
     overflow-y: auto;
     backface-visibility: hidden;
 }
@@ -1564,7 +1563,7 @@ footer .nav>li>a:hover {
     }
     .horizontal-nav .fixed-sidebar-left .collapse.in,
     .horizontal-nav .fixed-sidebar-left .collapsing {
-        /*display: none;*/
+        display: none;
     }
     .horizontal-nav .fixed-sidebar-left:hover {
         width: 100%;

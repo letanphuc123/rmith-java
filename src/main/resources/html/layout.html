@@ -7,41 +7,71 @@
         <title>Layout Page</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <meta name="robots" content="noindex,nofollow,noarchive" />
+        <link rel="shortcut icon" th:href="@{/static/img/favicon_mieruca_32x32.ico}" href="" />
+        <!-- Bootstrap-select -->
         <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-select/bootstrap-select.css}" href="" type="text/css" />
+        <!-- CSS Core -->
         <link rel="stylesheet" th:href="@{/static/css/component.css}" href="" type="text/css" />
         <link rel="stylesheet" th:href="@{/static/css/template.css}" href="" type="text/css" />
+        <!-- Custom CSS here -->
         <link rel="stylesheet" th:href="@{/static/plugins/sweet-alert/sweetalert.css}" href="" type="text/css" />
         <th:block layout:fragment="css" th:remove="all"></th:block>
         <link rel="stylesheet" th:href="@{/static/css/custom.css}" type="text/css" />
     </head>
     <body class="box-layout">
+        <!--Preloader-->
+        <div class="load-page">
+            <div class="loading"></div>
+        </div>
+        <!--/Preloader-->
+        <!-- Display menu horizontal add more class horizontal-nav  in wrapper -->
         <div class="wrapper horizontal-nav">
-            <!-- Header -->
+            <!-- Header top Menu Items -->
             <div th:replace="components/header.html :: #dev_header"></div>
-            <!-- /Header -->
+            <!-- /Header top Menu Items -->
 
-            <!-- Sidebar -->
+            <!-- Left Sidebar Menu -->
             <div th:replace="components/sidebar.html :: #div_sitebar"></div>
-            <!-- /Sidebar -->
+            <!-- /Left Sidebar Menu -->
 
+            <!-- Main Content -->
             <div class="page-wrapper">
                 <div class="container pt-10">
-                    
                     <!-- Main Content -->
                     <div layout:fragment="content">
+                        Page content goes here
                     </div>
                     <!-- /Main Content -->
+                    <!-- Footer -->
+                    <footer class="footer">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-12 txt--center">
+                                    <p><span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span> &copy; Mieruca <a th:href="@{/privacy-policy}"> Privacy Policy</a> -  <a th:href="@{/term-of-service}">Term of service</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                    <!-- /Footer -->
                 </div>
             </div>
+            <!-- /Main Content -->
 
         </div>
-        
+        <!--Include JS Core-->
+        <!-- jQuery -->
         <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
-        <script type="text/javascript" th:src="@{/static/js/init.js}"></script>
+        <!-- Bootstrap Core JavaScript -->
         <script type="text/javascript" th:src="@{/static/js/bootstrap.min.js}"></script>
-        <script type="text/javascript" th:src="@{/static/plugins/jquery/validate/jquery.validate.min.js}"></script>
+        <!-- Bootstrap-select -->
+        <script type="text/javascript" th:src="@{/static/plugins/bootstrap-select/bootstrap-select.js}"></script>
+        <!-- Slimscroll JavaScript -->
+        <script type="text/javascript" th:src="@{/static/js/jquery.slimscroll.js}"></script>
+        <!-- Init JavaScript -->
+        <script type="text/javascript" th:src="@{/static/js/init.js}"></script>
+        <script type="text/javascript" th:src="@{/static/plugins/jquery.validate/jquery.validate.min.js}"></script>
         <script type="text/javascript" th:src="@{/static/plugins/sweet-alert/sweetalert.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/js/custom.js}"></script>
         <th:block layout:fragment="scripts"></th:block>
     </body>
 </html>

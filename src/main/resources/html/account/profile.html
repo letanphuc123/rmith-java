@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{layout}">
+    <head>
+        <title>Profile | Local Search</title>
+        <th:block layout:fragment="css">
+            <link rel="stylesheet" th:href="@{/static/plugins/croppie/croppie.css}" type="text/css"/>
+        </th:block>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <!-- Component page -->
+            <div class="row bheading-title">
+                <!-- Breadcrumb -->
+                <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                    <ol class="breadcrumb">
+                        <li><a th:href="@{/dashboard}" th:text="${language.get('lb_dashboard')?:'Dashboard'}"></a></li> 
+                        <li class="active"><span th:text="${language.get('lb_profile')?:'Profile'}"></span></li> 
+                    </ol>
+                </div>
+                <!-- /Breadcrumb -->
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 text-right">
+                    <h5 class="txt-dark" th:text="${language.get('lb_profile')?:'Profile'}"></h5> 
+                </div>
+            </div>
+            <div class="row mt-10">
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                    <div class="panel panel-default border-panel card-view">
+                        <div class="panel-heading">
+                            <div class="pull-left">
+                                <h6 class="panel-title txt-dark" th:text="${language.get('lb_personal_information')?:'Personal Information'}"></h6>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-wrapper collapse in">
+                            <div class="panel-body">
+                                <div class="loading-page loading-box">
+                                    <div class="loading-center--absolute">
+                                        <div class="object object--one"></div>
+                                        <div class="object object--two"></div>
+                                        <div class="object object--three"></div>
+                                    </div>
+                                </div>
+                                <form id="frm_profile" th:attr="action=@{/update-profile}" method="POST" class="form-horizontal">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <input type="hidden" name="oldEmail" id="txt_old_email" th:value="${accountDTO?.email}"/>
+                                    <input type="hidden" name="emailWaitActive" id="txt_email_wait_active" th:value="${accountDTO?.emailWaitActive}"/>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_first_name " th:text="${language.get('lb_first_name')?:'First Name'}"></label> 
+                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                            <input type="text" th:class="'form-control ' + (${accountDTOupdateProfile?.errorMap?.get('firstName')} ? 'has--error' : '')" name="firstName" id="txt_firstName" autocomplete="off" th:value="${accountDTO?.firstName}"/>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTOupdateProfile?.errorMap?.get('firstName')}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_last_name" th:text="${language.get('lb_last_name')?:'Last Name'}"></label> 
+                                        <div class="col-md-8 col-sm-8 col-xs-8 col-sm-8 col-xs-8">
+                                            <input type="text" th:class="'form-control ' + (${accountDTOupdateProfile?.errorMap?.get('lastName')} ? 'has--error' : '')" name="lastName" id="txt_lastName" autocomplete="off" th:value="${accountDTO?.lastName}"/>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTOupdateProfile?.errorMap?.get('lastName')}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_email" th:text="${language.get('lb_email')?:'E-mail'}"></label> 
+                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                            <input type="email" id="txt_email" name="email" th:class="'form-control ' + (${accountDTOupdateProfile?.errorMap?.get('email')} ? 'has--error' : '')" th:value="${accountDTO?.email}"/> 
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTOupdateProfile?.errorMap?.get('email')}"></span>
+                                            <span id="messageEmail" class="txt--yellow font--12 mt--5 display--none" th:data-mail-wait-active="${accountDTO?.emailWaitActive}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_address" th:text="${language.get('lb_address')?:'Address'}"></label> 
+                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                            <input type="text" th:class="'form-control ' + (${accountDTOupdateProfile?.errorMap?.get('address')} ? 'has--error' : '')" name="address" id="txt_address" autocomplete="off" th:value="${accountDTO?.address}"/>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTOupdateProfile?.errorMap?.get('address')}"></span> 
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_city" th:text="${language.get('lb_city_town')?:'City/Town'}"></label> 
+                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                            <input type="text" th:class="'form-control ' + (${accountDTOupdateProfile?.errorMap?.get('city')} ? 'has--error' : '')" name="city" id="txt_city" autocomplete="off" th:value="${accountDTO?.city}"/>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTOupdateProfile?.errorMap?.get('city')}"></span> 
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_country" th:text="${language.get('lb_country')?:'Country'}"></label> 
+                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                            <select id="cbb_country" name="country" th:class="'select2 form-control select-option ' + (${accountDTOupdateProfile?.errorMap?.get('country')} ? 'has--error' : '')" th:value="${accountDTO?.country}">
+                                                <option value="JP" th:selected="${accountDTO.country == 'JP'}" >Japan</option>
+                                                <option value="US" th:selected="${accountDTO.country == 'US'}" >United States</option>
+                                                <option value="VN" th:selected="${accountDTO.country == 'VN'}" >Vietnam</option>
+                                            </select>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTOupdateProfile?.errorMap?.get('country')}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_language" th:text="${language.get('lb_language')?:'Language'}"></label> 
+                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                            <select id="cbb_language" name="accountLanguage" th:class="'select2 form-control select-option ' + (${accountDTOupdateProfile?.errorMap?.get('accountLanguage')} ? 'has--error' : '')" th:value="${accountDTO?.accountLanguage}">
+                                                <option value="JA" th:selected="${accountDTO.accountLanguage == 'JA'}" >Japanese</option>
+                                                <option value="EN" th:selected="${accountDTO.accountLanguage == 'EN'}" >English</option>
+                                                <option value="VI" th:selected="${accountDTO.accountLanguage == 'VI'}" >Vietnamese</option>
+                                            </select>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTOupdateProfile?.errorMap?.get('languageCode')}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_mobile" th:text="${language.get('lb_mobile_number')?:'Mobile Number'}"></label> 
+                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                            <input type="text" th:class="'form-control ' + (${accountDTOupdateProfile?.errorMap?.get('mobile')} ? 'has--error' : '')" name="mobile" id="txt_mobile" autocomplete="off" th:value="${accountDTO?.mobile}"/>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTOupdateProfile?.errorMap?.get('mobile')}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_company" th:text="${language.get('lb_company')?:'Company'}"></label> 
+                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                            <input type="text" th:class="'form-control ' + (${accountDTOupdateProfile?.errorMap?.get('companyName')} ? 'has--error' : '')" name="companyName" id="txt_company" autocomplete="off" th:value="${accountDTO?.companyName}"/>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTOupdateProfile?.errorMap?.get('companyName')}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_website" th:text="${language.get('lb_website_url')?:'Website Url'}"></label> 
+                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                            <input type="text" th:class="'form-control ' + (${accountDTOupdateProfile?.errorMap?.get('website')} ? 'has--error' : '')" name="website" id="txt_website" autocomplete="off" th:value="${accountDTO?.website}" placeholder="https://mieru-ca.com/"/>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTOupdateProfile?.errorMap?.get('website')}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_avatar" th:text="${language.get('lb_avatar')?:'Avatar'}"></label> 
+                                        <div class="col-md-8 col-sm-8 col-xs-8 upload-img">
+                                            <label for="avatar">
+                                                <input id="avatar" class="upload-img__input" type="file" name="profile_image"/>
+                                                <span class="upload-img__button" th:text="${language.get('lb_select_file')?:'Select file'}"></span>
+                                            </label>
+                                            <div id="pop_crop_img_avatar" class="upload-img__popcrop">
+                                                <div id="img_container_avatar_div"></div>
+                                                <div style="text-align: center;" th:text="${language.get('lb_drag_and_zoom')?:'Drag and zoom to adjust image'}"></div>
+                                                <div class="button-img">
+                                                    <button type="button" class="upload-result btn btn--xs btn--navyblue" th:text="${language.get('lb_result')?:'Result'}"></button>
+                                                    <button type="button" class="cancel-btn btn btn btn--xs btn--default" th:text="${language.get('lb_cancel')?:'Cancel'}"></button>   
+                                                </div>
+                                            </div>
+                                            <input class="form-control" id="txt_avatar" name="avatar" type="hidden" th:value="${accountDTO?.avatar}"/>
+                                            <div id="avatar_div" style="width: 160px; height: 160px; margin-top: 15px;">
+                                                <th:block th:if="${accountDTO.avatar}  == 'unknown'" >
+                                                    <img id="avatar_profile" th:src="@{/static/img/avatar.png}" />
+                                                </th:block>
+                                                <th:block th:unless="${accountDTO.avatar}  == 'unknown'" >
+                                                    <img id="avatar_profile" th:src="${accountDTO?.avatar}" />
+                                                </th:block>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <br/>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_logo" th:text="${language.get('lb_logo')?:'Logo'}"></label> 
+                                        <div class="col-md-8 col-sm-8 col-xs-8 upload-img">
+                                            <label for="txt_image_logo">
+                                                <input id="txt_image_logo" class="upload-img__input" type="file" name="profile_image"/>
+                                                <span class="upload-img__button" th:text="${language.get('lb_select_file')?:'Select file'}"></span>
+                                            </label>
+                                            <div id="logo_div" class="logo__agencies mt--15 mb--15" >
+                                                <th:block th:if="${accountDTO.logo}  == 'unknown'" >
+                                                    <span><img id="div_logo_view" name="logo" th:src="@{/static/img/no-logo.png}"/></span>
+                                                </th:block>
+                                                <th:block th:unless="${accountDTO.logo}  == 'unknown'" >
+                                                    <span><img id="div_logo_view" name="logo" th:src="${accountDTO?.logo}" /></span>
+                                                </th:block>
+                                            </div>
+                                            <input class="form-control" id="txt_logo" name="logo" type="hidden" th:value="${accountDTO?.logo}"/>
+                                            <input type="hidden" id="txt_bannerImage" name="bannerImage" />
+                                            <input type="hidden" id="txt_file_name" name="fileName" value="nochange"/>
+                                            <input type="hidden" id="txt_file_src" name="fileSrc" value=""/>
+                                            <div id="div_size_logo" th:class="'input-group ' + (${accountDTO.logo} == 'unknown' ? 'display--none' : '')" >
+                                                <div class="icheck-inline">
+                                                    <label style="margin-right: 10px" th:text="${language.get('lb_width')?:'Width'}"></label> 
+                                                    <input id="txt_image_width" name="bannerWidth" class="text-center image-width" style="width: 60px;" readonly="readonly"/>
+                                                    <label style="margin-left: 0">px</label>
+                                                    <label style="margin-right: 10px" th:text="${language.get('lb_height')?:'Height'}"></label> 
+                                                    <input id="txt_image_height" name="bannerHeight" class="text-center image-height" style="width: 60px;" readonly="readonly"/>
+                                                    <label style="margin-left: 0">px</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-4 col-sm-4 col-xs-4 text-right"></div>
+                                        <div class="col-md-8 col-sm-8 col-xs-8 text-right">
+                                            <button type="submit" class="btn btn--navyblue btn--xs" id="btn_saveChanges" th:text="${language.get('lb_save_changes')?:'Save Changes'}"></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <th:block th:if="${passwordNotExist} != null" >
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                        <div class="panel panel-default border-panel card-view">
+                            <div class="panel-heading">
+                                <div class="pull-left">
+                                    <h6 class="panel-title txt-dark" th:text="${language.get('lb_add_password')?:'Add Password'}"></h6>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="panel-wrapper collapse in">
+                                <div class="panel-body">
+                                    <div class="loading-page loading-box">
+                                        <div class="loading-center--absolute">
+                                            <div class="object object--one"></div>
+                                            <div class="object object--two"></div>
+                                            <div class="object object--three"></div>
+                                        </div>
+                                    </div>
+                                    <form id="frm_setPassword" th:attr="action=@{/set-password-thirdparty-account}" method="POST" class="form-horizontal">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <div class="form-body">
+                                            <div class="form-group">
+                                                <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_new_pass" th:text="${language.get('lb_new_password')?:'New Password'}"></label> 
+                                                <div class="col-md-8 col-sm-8 col-xs-8" >
+                                                    <input type="password" th:class="'form-control ' + (${accountDTOupdatePassword?.errorMap?.get('newSecretKey')} ? 'has--error' : '')" name="secretKey" id="txt_new_password" autocomplete="off"/>
+                                                    <span class="txt--error font--12 mt--5" th:text="${accountDTOupdatePassword?.errorMap?.get('newSecretKey')}"></span> 
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_repass" th:text="${language.get('lb_retype_new_password')?:'Re-type New Password'}"></label> 
+                                                <div class="col-md-8 col-sm-8 col-xs-8">
+                                                    <input type="password" class="form-control" name="confirmSecretKey" id="txt_rpassword" autocomplete="off"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-md-4 col-sm-4 col-xs-4"></div>
+                                            <div class="col-md-8 col-sm-8 col-xs-8 text-right">
+                                                <button type="submit" class="btn btn--navyblue btn--xs" th:text="${language.get('lb_add_password')?:'Add Password'}"></button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+                <th:block th:unless="${passwordNotExist} != null" >
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                        <div class="panel panel-default border-panel card-view">
+                            <div class="panel-heading">
+                                <div class="pull-left">
+                                    <h6 class="panel-title txt-dark" th:text="${language.get('lb_change_password')?:'Change password'}"></h6>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="panel-wrapper collapse in">
+                                <div class="panel-body">
+                                    <div class="loading-page loading-box">
+                                        <div class="loading-center--absolute">
+                                            <div class="object object--one"></div>
+                                            <div class="object object--two"></div>
+                                            <div class="object object--three"></div>
+                                        </div>
+                                    </div>
+                                    <form id="frm_changePassword" th:attr="action=@{/update-password}" method="POST" class="form-horizontal">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <div class="form-body">
+                                            <div class="form-group">
+                                                <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_current_pass" th:text="${language.get('lb_current_password')?:'Current Password'}"></label> 
+                                                <div class="col-md-8 col-sm-8 col-xs-8">
+                                                    <input type="password" th:class="'form-control ' + (${accountDTOupdatePassword?.errorMap?.get('secretKey')} ? 'has--error' : '')" name="secretKey" id="txt_old_password" autocomplete="off"/>
+                                                    <span class="txt--error font--12 mt--5" th:text="${accountDTOupdatePassword?.errorMap?.get('secretKey')}"></span> 
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_new_pass" th:text="${language.get('lb_new_password')?:'New Password'}"></label> 
+                                                <div class="col-md-8 col-sm-8 col-xs-8">
+                                                    <input type="password" th:class="'form-control ' + (${accountDTOupdatePassword?.errorMap?.get('newSecretKey')} ? 'has--error' : '')" name="newSecretKey" id="txt_new_password" autocomplete="off"/>
+                                                    <span class="txt--error font--12 mt--5" th:text="${accountDTOupdatePassword?.errorMap?.get('newSecretKey')}"></span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-md-4 col-sm-4 col-xs-4 text-right control-label lb_repass" th:text="${language.get('lb_retype_new_password')?:'Re-type New Password'}"></label> 
+                                                <div class="col-md-8 col-sm-8 col-xs-8">
+                                                    <input type="password" class="form-control" name="confirmSecretKey" id="txt_rpassword" autocomplete="off"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-md-4 col-sm-4 col-xs-4"></div>
+                                            <div class="col-md-8 col-sm-8 col-xs-8 text-right">
+                                                <button type="submit" class="btn btn--navyblue btn--xs" id="btn_changePassword" th:text="${language.get('lb_change_password')?:'Change Password'}"></button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+            <div id="pop_crop_banner" class="modal fade modal-center" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h5 class="modal-title" id="myModalLabel" th:text="${language.get('lb_crop_image')?:'Crop image'}"></h5> 
+                        </div>
+                        <input type="hidden" id="size_val"/>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <div class="input-group" style="margin-left: 15px;">
+                                    <div class="flex flex-middle">
+                                        <select id="cbo_size" class="height--34 mr--15" style="width: 120px;">
+                                            <option value="100x60" selected="selected">100 x 60</option>
+                                            <option value="120x60">120 x 60</option>
+                                            <option value="120x120">120 x 120</option>
+                                            <option value="234x60">234 x 60</option>
+                                            <option value="468x60">468 x 60</option>
+                                            <option value="custom" th:text="${language.get('lb_custom')?:'Custom'}"></option>
+                                        </select>
+                                        <div class="flex flex-middle">
+                                            <label class=" mr--10" th:text="${language.get('lb_width')?:'Width'}"></label> 
+                                            <input id="size_width" class="form-control text-right w--80 mr--10" type="number"/>
+                                            <label>px</label>
+                                        </div>
+                                        <div class="flex flex-middle">
+                                            <label class=" mr--10" th:text="${language.get('lb_height')?:'Height'}"></label> 
+                                            <input id="size_height" class="form-control text-right w--80 mr--10" type="number"/>
+                                            <label>px</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="banner_container_div" style="height: 300px;margin-bottom: 40px;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btn_crop" type="button" class="btn btn--navyblue btn--xs " th:text="${language.get('lb_result')?:'Result'}"></button>
+                            <button id="btn_cancel" type="button" class="btn btn--default btn--xs" th:text="${language.get('lb_cancel')?:'Cancel'}"></button>
+                        </div>
+
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        </div>
+    </body>
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/static/plugins/jquery.validate/jquery.validate.min.js}" type="text/javascript"></script>
+        <script th:src="@{'/static/plugins/jquery.validate/localization/validate-' + ${session.language} + '.js'}" src=""></script>
+        <script th:src="@{/static/plugins/croppie/exif.js}" type="text/javascript"></script>
+        <script th:src="@{/static/plugins/croppie/croppie.min.js}" type="text/javascript"></script>
+        <script th:src="@{/static/plugins/croppie/croppie-custom.js}" type="text/javascript"></script>
+
+        <script>
+            $(document).ready(function () {
+                $(".loading-page").delay(1500).fadeOut("slow");
+                var avatarCroppie = {
+                    idInputFile: "avatar",
+                    idDom: "avatar_div",
+                    popupCropImage: "pop_crop_img_avatar",
+                    divImg: "avatar_div_img",
+                    imgContainerDiv: "img_container_avatar_div",
+                    txtImage: "txt_avatar",
+                    uploadImage: "div_upload_img_avatar",
+                    viewPortWidth: 160,
+                    viewPortHeight: 160
+                };
+                var logoCroppie = {
+                    idInputFile: "txt_image_logo",
+                    idViewElement: "div_logo_view",
+                    idSrcElement: "txt_file_src",
+                    idFileNameElement: "txt_file_name",
+                    idImageWith: "txt_image_width",
+                    idImageHeight: "txt_image_height",
+                    idSizeLogo: "div_size_logo",
+                    idDom: "logo_div",
+                    uploadImage: "div_upload_img_logo",
+                    txtImage: "txt_logo"
+                };
+                initCroppie(avatarCroppie);
+
+                // Crop image logo agency
+                $("#" + logoCroppie.idImageWith).val($("#" + logoCroppie.idViewElement).prop("naturalWidth"));
+                $("#" + logoCroppie.idImageHeight).val($("#" + logoCroppie.idViewElement).prop("naturalHeight"));
+                document.getElementById(logoCroppie.idInputFile).onclick = function () {
+                    this.value = null;
+                };
+                document.getElementById(logoCroppie.idInputFile).onchange = function () {
+                    initCroppieBanner(logoCroppie);
+                };
+
+                $.validator.addMethod("pwcheck", function (value, element) {
+                    return this.optional(element) ||
+                            /^.*(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*[\W_]).*$/.test(value);
+                });
+
+                $.validator.addMethod("datecheck", function (value, element) {
+                    return this.optional(element) ||
+                            /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/.test(value);
+                }, "The date of birth is formated yyyy-mm-dd. e.g 1999-01-20");
+
+                $("#frm_profile").validate({
+                    errorElement: 'span', //default input error message container
+                    errorClass: 'txt--error font--12 mt--5', // default input error message class
+                    focusInvalid: false, // do not focus the last invalid input
+                    rules: {
+                        "firstName": {
+                            required: true,
+                            maxlength: 50
+                        },
+                        "lastName": {
+                            required: true,
+                            maxlength: 50
+                        },
+                        "email": {
+                            required: true,
+                            email: true,
+                            maxlength: 150
+                        },
+                        "address": {
+                            maxlength: 500
+                        },
+                        "city": {
+                            maxlength: 100
+                        },
+                        "country": {
+                            maxlength: 100
+                        },
+                        "accountLanguage": {
+                            maxlength: 2
+                        },
+                        "mobile": {
+                            maxlength: 50
+                        },
+                        "companyName": {
+                            maxlength: 500
+                        },
+                        "website": {
+                            url: true,
+                            maxlength: 500
+                        }
+                    },
+                    highlight: function (element) { // hightlight error inputs
+                        $(element).closest('.form-group').addClass('has--error'); // set error class to the control group
+                    },
+                    unhighlight: function (element) { // revert the change done by hightlight
+                        $(element).closest('.form-group').removeClass('has--error'); // set error class to the control group
+                    },
+                    success: function (label) {
+                        label.closest('.form-group').removeClass('has--error'); // set success class to the control group
+                    },
+                    submitHandler: function () {
+                        return true;
+                    }
+                });
+
+                $("#frm_changePassword").validate({
+                    errorElement: 'span', //default input error message container
+                    errorClass: 'txt--error font--12 mt--5', // default input error message class
+                    focusInvalid: false, // do not focus the last invalid input
+                    rules: {
+                        "secretKey": {
+                            required: true,
+                            minlength: 8,
+                            maxlength: 20,
+                            pwcheck: true
+                        },
+                        "newSecretKey": {
+                            required: true,
+                            minlength: 8,
+                            maxlength: 20,
+                            pwcheck: true
+                        },
+                        "confirmSecretKey": {
+                            required: true,
+                            minlength: 8,
+                            maxlength: 20,
+                            equalTo: "#txt_new_password"
+                        }
+                    },
+                    highlight: function (element) { // hightlight error inputs
+                        $(element).closest('.form-group').addClass('has--error'); // set error class to the control group
+                    },
+                    unhighlight: function (element) { // revert the change done by hightlight
+                        $(element).closest('.form-group').removeClass('has--error'); // set error class to the control group
+                    },
+                    success: function (label) {
+                        label.closest('.form-group').removeClass('has--error'); // set success class to the control group
+                    },
+                    submitHandler: function () {
+                        return true;
+                    }
+                });
+
+                $("#frm_setPassword").validate({
+                    errorElement: 'span', //default input error message container
+                    errorClass: 'txt--error font--12 mt--5', // default input error message class
+                    focusInvalid: false, // do not focus the last invalid input
+                    rules: {
+                        "newSecretKey": {
+                            required: true,
+                            minlength: 8,
+                            pwcheck: true
+                        },
+                        "confirmSecretKey": {
+                            required: true,
+                            minlength: 8,
+                            equalTo: "#txt_new_password"
+                        }
+                    },
+                    highlight: function (element) { // hightlight error inputs
+                        $(element).closest('.form-group').addClass('has--error'); // set error class to the control group
+                    },
+                    unhighlight: function (element) { // revert the change done by hightlight
+                        $(element).closest('.form-group').removeClass('has--error'); // set error class to the control group
+                    },
+                    success: function (label) {
+                        label.closest('.form-group').removeClass('has--error'); // set success class to the control group
+                    },
+                    submitHandler: function () {
+                        return true;
+                    }
+                });
+
+                let mailWaitActive = $('#messageEmail').attr("data-mail-wait-active");
+                $('#txt_email_wait_active').val(mailWaitActive);
+                if (mailWaitActive) {
+                    $('#txt_email').prop('disabled', true);
+                    $('#messageEmail').attr('class', 'txt--navyblue font--12 mt--5 block');
+                    $('#messageEmail').text("[[${language.get('lb_noti_activated_email')?:'A email activated yet'}]]" + ' : ' + mailWaitActive);
+                } else {
+                    $('#txt_email').prop('disabled', false);
+                    $('#messageEmail').attr('class', 'display--none');
+                }
+
+                //show message when user change email.
+                showMessageChangeEmail("[[${language.get('lb_noti_change_email')?:'After changed email. A verification link will be sent to new email.'}]]");
+            });
+        </script> 
+
+        <!-- Update Profile -->
+        <th:block th:if="${passwordNotExist != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_warning')?:'Warning!'}]]", "[[${language.get('lb_alert_set_password')?:'Because of security issues, you need to set password for your Local Mieruca account!'}]]", "warning");
+            </script> 
+        </th:block>
+
+        <th:block th:if="${updateProfileSuccess != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_success')?:'Successful!'}]]", "[[${language.get('lb_update_profile_success')?:'Upgrade account to agency successfully!'}]]", "success");
+            </script> 
+        </th:block>
+
+        <th:block th:if="${emailIsExist != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_warning')?:'Warning!'}]]", "[[${language.get('lb_email_existed')?:'This email is exist! Please try another one.'}]]", "warning");
+            </script> 
+        </th:block>
+
+        <th:block th:if="${updateProfileError != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_update_profile_error')?:'An error has occurred! Please contact us for help.'}]]", "error");
+            </script> 
+        </th:block>
+
+        <!-- Set Password -->
+        <th:block th:if="${setPasswordSuccess != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_success')?:'Successful!'}]]", "[[${language.get('lb_set_password_success')?:'Set new password successfully!'}]]", "success");
+            </script> 
+        </th:block>
+
+        <th:block th:if="${setPasswordError != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_set_password_error')?:'An error has occurred! Please contact us for help.'}]]", "error");
+            </script> 
+        </th:block>
+
+        <!-- Update Password -->
+        <th:block th:if="${updatePasswordSuccess != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_success')?:'Successful!'}]]", "[[${language.get('lb_update_password_success')?:'Update password successfully!'}]]", "success");
+            </script> 
+        </th:block>
+
+        <th:block th:if="${wrongPassword != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_warning')?:'Warning!'}]]", "[[${language.get('lb_wrong_password')?:'Your current password is wrong!'}]]", "warning");
+            </script> 
+        </th:block>
+
+        <th:block th:if="${passwordNotMatch != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_warning')?:'Warning!'}]]", "[[${language.get('lb_password_not_match')?:'Password and confirm password must match!'}]]", "warning");
+            </script> 
+        </th:block>
+
+        <th:block th:if="${updatePasswordError != null}">
+            <script>
+                showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_update_password_error')?:'An error has occurred! Please contact us for help.'}]]", "error");
+            </script> 
+        </th:block>
+    </th:block>
+</html>

@@ -6,8 +6,14 @@ import org.springframework.security.web.context.AbstractSecurityWebApplicationIn
 
 /**
  *
- * @author Teo-Em
+ * @author Le Tan Phuc
+ 
+ */
+/**
+ * Extend AbstractSecurityWebApplicationInitializer to automatically register
+ * the springSecurityFilterChain Filter for every URL in your application.
+ *
  */
 public class SecurityWebApplicationInitializer extends AbstractSecurityWebApplicationInitializer {
-    
+
 }

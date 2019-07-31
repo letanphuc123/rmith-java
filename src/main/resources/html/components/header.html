@@ -10,8 +10,20 @@
                         <div class="logo-wrap">
                             <a th:href="@{/dashboard}">
                                 <span class="brand-text brand__pc">
-                                    <img th:src="@{/static/img/header_logo.png}"/>
+                                    <th:block th:if="${session.logo != null and session.logo != 'unknown'}">
+                                        <img th:src="${session.logo}" alt="brand" />
+                                        <span class="brand-text brand__mb">
+                                            <img th:src="${session.logo}" alt=""/>
+                                        </span>
+                                    </th:block>
+                                    <th:block th:unless="${session.logo != null and session.logo != 'unknown'}">
+                                        <img th:src="@{/static/img/header_logo.svg}"/>
+                                        <span class="brand-text brand__mb">
+                                            <img th:src="@{/static/img/brand_mb.png}"/>
+                                        </span>
+                                    </th:block>
                                 </span>
+
                             </a>
                         </div>
                     </div>
@@ -21,39 +33,78 @@
                 </div>
                 <div id="mobile_only_nav" class="mobile-only-nav pull-right">
                     <ul class="nav navbar-right top-nav pull-right">
+                        <li class="flag__header">
+                            <select id="changeLanguage" class="selectpicker">
+                                <option value="JA" data-icon="flat_googlecojp" th:selected="${session.language == 'JA'}">Japanese</option>
+                                <option value="EN" data-icon="flat_googlecom" th:selected="${session.language == 'EN'}">English</option>
+                                <option value="VI" data-icon="flat_googlecomvn" th:selected="${session.language == 'VI'}">Vietnamese</option>
+                            </select>
+                        </li>
+                        <th:block th:if="${trialExpired != null}">
+                            <li class="">
+                                <div onclick="window.location.href = 'payment'" class="free__trail">
+                                    <div class="free__trail--title" th:text="${language.get('trial')?:'Free trial'}"></div>
+                                    <div class="free__trail--text">
+                                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                        <span th:text="${trialExpired} + ' ' + ${language.get('days_left')?:'days left'}"></span>
+                                    </div>
+                                </div>
+                            </li>
+                        </th:block>
+
                         <li class="dropdown alert-drp">
-                            <li class="dropdown auth-drp">
-                                <a href="#" class="dropdown-toggle pr--0" data-toggle="dropdown">
-                                    <img th:src="@{/static/img/user_settings.png}" alt="user_auth" class="no-auth-img" />
-                                </a>
-                                <ul class="dropdown-menu user-auth-dropdown" data-dropdown-in="fadeInUp" data-dropdown-out="fadeOutDown">
-                                    <li>
-                                        <div class="user-name-text" th:text="${'rmith2019@gmail.com'}"></div>
-                                    </li>
-                                    <li>
-                                        <a th:href="@{/profile}">
-                                            <i class="fa fa-user"></i>
-                                            <span class="nonecase--font" th:text="${'Profile'}"></span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <form id="frmSignOut" th:attr="action=@{/sign-out}" method="POST">
-                                            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-                                            <button type="submit" class="btn--logout">
-                                                <i class="fa fa-sign-out"></i>
-                                                <span th:text="${'Sign Out'}"></span>
-                                            </button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="@{/login}" class="txt--light" th:text="${'Log In'}"></a>
-                            </li>
+                            <a th:href="@{/notifications}" >
+                                <i class="fa fa-bell-o top-nav-icon txt--light"></i>
+                                <span class="top-nav-icon-badge" th:text="${unseenNotificationNumber}"></span>
+                            </a>
+
+                            <th:block th:if="${session.email != null}">
+                                <li class="dropdown auth-drp">
+                                    <a href="#" class="dropdown-toggle pr--0" data-toggle="dropdown">
+                                        <th:block th:if="${session.avatar != null and session.avatar != 'unknown'}">
+                                            <img th:src="${session.avatar}" alt="user_auth" class="user-auth-img" />
+                                        </th:block>
+                                        <th:block th:unless="${session.avatar != null and session.avatar != 'unknown'}">
+                                            <img th:src="@{/static/img/user_settings.png}" alt="user_auth" class="no-auth-img" />
+                                        </th:block>
+                                    </a>
+                                    <ul class="dropdown-menu user-auth-dropdown" data-dropdown-in="fadeInUp" data-dropdown-out="fadeOutDown">
+                                        <li>
+                                            <div class="user-name-text" th:text="${session.name != null ? session.name : session.email}"></div>
+                                        </li>
+                                        <li>
+                                            <a th:href="@{/profile}">
+                                                <i class="fa fa-user"></i>
+                                                <span class="nonecase--font" th:text="${language.get('profile')?:'Profile'}"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <form id="frmSignOut" th:attr="action=@{/sign-out}" method="POST">
+                                                <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+                                                <button type="submit" class="btn--logout">
+                                                    <i class="fa fa-sign-out"></i>
+                                                    <span th:text="${language.get('sign_out')?:'Sign Out'}"></span>
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </th:block>
+                            <th:block th:unless="${session.email != null}">
+                                <li>
+                                    <a href="@{/login}" class="txt--light" th:text="${language.get('log_in')!'Log In'}"></a>
+                                </li>
+                            </th:block>
                         </li>
                     </ul>
                 </div>
             </div>
+            <form id="frmChangeLanguage" th:attr="action=@{/update-language-header}" method="POST">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="hidden" id="txtContextPathChangeLanguageSession" th:value="@{/}"/>
+                <input type="hidden" id="txtChangeLanguageSession" name="language"/>
+                <input type="hidden" id="txtChangeLanguageSessionRedirect" name="redirect"/>
+            </form>
         </nav>
     </body>
 </html>

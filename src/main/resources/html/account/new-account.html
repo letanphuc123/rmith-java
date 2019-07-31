@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+       data-layout-decorate="~{layout}">
+
+    <head>
+        <title>New Account | Local Search</title>
+        <th:block layout:fragment="css"> 
+            <link rel="stylesheet" th:href="@{/static/plugins/single-datetimepicker/bootstrap-datepicker.min.css}"  type="text/css"/>
+            <link rel="stylesheet" th:href="@{/static/plugins/single-datetimepicker/jquery.datetimepicker.css}"  type="text/css"/>
+        </th:block>
+    </head>
+
+    <body>
+        <!-- Main Content -->
+        <div layout:fragment="content">
+            <div id="divAddAccountWaiting"></div>
+            <div class="row bheading-title">
+                <!-- Breadcrumb -->
+                <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                    <ol class="breadcrumb">
+                        <li><a th:href="@{/dashboard}" th:text="${language.get('lb_dashboard')?:'Dashboard'}"></a></li>
+                        <li><a th:href="@{/accounts}" th:text="${language.get('lb_breadcrumb_account')?:'Accounts'}"></a></li>
+                        <li class="active"><span th:text="${language.get('lb_breadcrumb_new_account')?:'New Account'}"></span></li>
+                    </ol>
+                </div>
+                <!-- /Breadcrumb -->
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 text-right">
+                    <h5 class="txt--dark" th:text="${language.get('lb_new_account_page')?:'New Account'}"></h5>
+                </div>
+            </div>
+            <div class="row mt-10">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="panel panel-default border-panel card-view">
+                        <div class="panel-heading">
+                            <div class="pull-left">
+                                <h6 class="panel-title txt-dark" th:text="${language.get('lb_tittle')?:'Add New Account'}"></h6>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-wrapper collapse in">
+                            <div class="panel-body">
+                                <form id="frm_add_account" th:attr="action=@{/add-account}" method="post">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <div class="row mb--10">
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <label th:text="${language.get('lb_form_first_name')?:'First Name'}"></label>
+                                            <input class="form-control" th:placeholder="${language.get('lb_first_name')?:'Enter first name'}" type="text" name="firstName" id="txt_firstname" autocomplete="off" th:value="${accountDTO?.firstName}"/>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTO?.errorMap?.get('firstName')}"></span> 
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <label th:text="${language.get('lb_form_last_name')?:'Last Name'}"></label>
+                                            <input class="form-control" th:placeholder="${language.get('lb_last_name')?:'Enter last name'}" type="text" name="lastName" id="txt_lastname" autocomplete="off" th:value="${accountDTO?.lastName}"/>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTO?.errorMap?.get('lastName')}"></span> 
+                                        </div>
+                                    </div>
+                                    <div class="row mb--10">
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <label th:text="${language.get('lb_form_company_name')?:'Company Name'}"></label>
+                                            <input class="form-control" th:placeholder="${language.get('lb_company')?:'Enter company name'}" name="companyName" type="text" id="txt_company" autocomplete="off" th:value="${accountDTO?.companyName}"/>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTO?.errorMap?.get('companyName')}"></span>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <label th:text="${language.get('lb_form_email')?:'Email'}"></label>
+                                            <input class="form-control" th:classappend="${(emailIsExist != null) ? 'has--error' : ''}" th:placeholder="${language.get('lb_email')?:'Enter email'}" type="text" name="email" id="txt_email" autocomplete="off" th:value="${accountDTO?.email}"/>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTO?.errorMap?.get('email')}"></span>   
+                                            <th:block th:if="${emailIsExist != null}">
+                                                <span class="txt--error font--12 mt--5" th:text="${language.get('lb_validate_email')?:'This email is exist?:'}"></span> 
+                                            </th:block>
+                                        </div>
+                                    </div>
+                                    <div class="row mb--10">
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <label th:text="${language.get('lb_form_mobile')?:'Mobile'}"></label>
+                                            <input class="form-control" th:placeholder="${language.get('lb_mobile')?:'Enter mobile'}" type="text" name="mobile" id="txt_mobile" autocomplete="off" th:value="${accountDTO?.mobile}"/>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTO?.errorMap?.get('mobile') }"></span>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <label th:text="${language.get('lb_form_language')?:'Language'}"></label>
+                                            <select id="cbo_language" name="accountLanguage" class="form-control">
+                                                <option value="JA" selected="">Japanese</option>
+                                                <option value="EN">English</option>
+                                                <option value="VI">Vietnamese</option>
+                                            </select>
+                                            <span class="txt--error font--12 mt--5" th:text="${accountDTO?.errorMap?.get('accountLanguage')}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb--10">
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <label th:text="${language.get('lb_form_password')?:'Password'}"></label>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-6">
+                                                    <input class="form-control" th:placeholder="${language.get('lb_password')?:'Enter Password'}" type="password" name="secretKey" id="txtPassword" />
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-6">
+                                                    <input class="form-control" th:placeholder="${language.get('lb_confirm_password')?:'Confirm Password'}" type="password" name="confirmSecretKey" id="txtConfirmPassword" />
+                                                    <th:block th:if="${addAccountStatus!=null && addAccountStatus == 'NOTMATCH'}">
+                                                        <span class="txt--error font--12 mt--5" th:text="${language.get('lb_password_alert')?:'Confirmed password must match!'}"></span>
+                                                    </th:block>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-6">
+                                                    <label th:text="${language.get('lb_form_start_date')?:'Start Date'}"></label>
+                                                    <input type="text" class="form-control" name="dateStart" id="txt_start_date" autocomplete="off" />
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-6">
+                                                    <label th:text="${language.get('lb_form_end_date')?:'End Date'}"></label>
+                                                    <input type="text" class="form-control" name="dateEnd" id="txt_end_date" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb--10">
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <label th:text="${language.get('lb_form_memo')?:'Memo'}"></label>
+                                            <textarea id="txt_memo" name="memo" class="form-control input-sm txta--resize height--120" style="resize: none;"></textarea>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <div class="checkbox mt--30">
+                                                <input id="cbo_active_account" name="accountStatus" type="checkbox"/>
+                                                <label for="cbo_active_account" th:text="${language.get('lb_form_active_account')?:'Active Account'}"></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <div class="checkbox mt--10">
+                                                <input id="cbo_is_admin" name="isAdmin" type="checkbox"/>
+                                                <label for="cbo_is_admin" th:text="${language.get('lb_form_is_admin')?:'Is Admin'}"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb--10">
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <label th:text="${language.get('lb_form_group_user')?:'Group User'}"></label>
+                                            <select id="cbo_group_user" name="groupId" class="form-control">
+                                                <th:block th:each="item : ${listGroupUser}">
+                                                    <option th:value="${item.groupId}" th:text="${item.groupName}"></option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <label th:text="${language.get('lb_form_package')?:'Package'}"></label>
+                                            <select id="cbo_package" name="packageId" class="form-control">
+                                                <th:block th:each="item : ${listPackage}">
+                                                    <option th:value="${item.packageId}" th:text="${item.packageName}"></option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row mb--10">
+                                        <div class="col-md-12 col-sm-12 col-xs-12 text-right">
+                                            <button type="submit" class="btn btn--xs btn--navyblue" th:text="${language.get('lb_button_save')?:'Save'}"></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Main Content -->
+        <th:block layout:fragment="scripts">
+            <script th:src="@{/static/plugins/single-datetimepicker/jquery.datetimepicker.js}"></script>
+            <script th:src="@{/static/plugins/jquery.validate/jquery.validate.min.js}"></script>
+            <script th:src="@{'/static/plugins/jquery.validate/localization/validate-' + ${session.language} + '.js'}"></script>
+            <script>
+                $(document).ready(function () {
+                    $(".loading-page").delay(1500).fadeOut("slow");
+                    initDateTimePicker('#txt_start_date', 'Y-m-d H:i:s', true);
+                    initDateTimePicker('#txt_end_date', 'Y-m-d H:i:s', true);
+
+                    // Handle checkbox
+                    handleCheckbox("#cbo_is_admin");
+                    handleCheckbox("#cbo_active_account");
+                    $.validator.addMethod("pwcheck", function (value, element) {
+                        return this.optional(element) ||
+                                /^.*(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*[\W_]).*$/.test(value);
+                    });
+                    $("#frm_add_account").validate({
+                        errorElement: 'span', //default input error message container
+                        errorClass: 'txt--error font--12 mt--5', // default input error message class
+                        focusInvalid: false, // do not focus the last invalid input
+                        rules: {
+                            "firstName": {
+                                maxlength: 50
+                            },
+                            "lastName": {
+                                maxlength: 50
+                            },
+                            "companyName": {
+                                maxlength: 500
+                            },
+                            "email": {
+                                required: true,
+                                email: true,
+                                maxlength: 150
+                            },
+                            "mobile": {
+                                maxlength: 50
+                            },
+                            "accountLanguage": {
+                                maxlength: 2
+                            },
+                            "secretKey": {
+                                required: true,
+                                minlength: 8,
+                                maxlength: 20,
+                                pwcheck: true
+                            },
+                            "confirmSecretKey": {
+                                required: true,
+                                equalTo: "#txtPassword"
+                            },
+                            "groupId": {
+                                required: true
+                            },
+                            "packageId": {
+                                required: true
+                            }
+                        },
+                        highlight: function (element) { // hightlight error inputs
+                            $(element).closest('.form-group').addClass('has--error'); // set error class to the control group
+                        },
+                        unhighlight: function (element) { // revert the change done by hightlight
+                            $(element).closest('.form-group').removeClass('has--error'); // set error class to the control group
+                        },
+                        success: function (label) {
+                            label.closest('.form-group').removeClass('has--error'); // set success class to the control group
+                        },
+                        submitHandler: function () {
+                            showWait("#divAddAccountWaiting");
+                            return true;
+                        }
+                    });
+                });
+
+            </script> 
+            <th:block th:if="${passwordNotMatch != null}">
+                <script>
+
+                    showAlert("[[${language.get('lb_alert_warning')?:'Warning!'}]]", "[[${language.get('lb_password_not_match')?:'Password and confirm password must match?:'}]]", "warning");
+                </script> 
+            </th:block>
+
+            <th:block th:if="${emailIsExist != null}">
+                <script>
+                    showAlert("[[${language.get('lb_alert_warning')?:'Warning!'}]]", "[[${language.get('lb_email_exist')?:'This email is exist! Please try another one.'}]]", "warning");
+                </script>
+            </th:block>
+
+            <th:block th:if="${error!=null}"> 
+                <script>
+                    showAlert("[[${language.get('lb_alert_error')?:'Error!'}]]", "[[${language.get('lb_error')?:'An error has occurred! Please try again later.'}]]", "error");
+                </script>
+            </th:block>
+
+        </th:block>
+    </body>
+</html>

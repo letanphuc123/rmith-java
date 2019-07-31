@@ -10,11 +10,12 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  *
- * @author Teo-Em
+ * @author Le Tan Phuc
+ 
  */
 @Configuration
 public class TomcatConfig {
-    
+
     @Value("${custom.config.tomcat.context-path}")
     private String contextPath;
     @Value("${custom.config.tomcat.port}")
@@ -25,11 +26,12 @@ public class TomcatConfig {
         System.out.println("\n################## Init Tomcat Config ##################");
 
         TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
+
+        /* Use Http11Nio2Protocol instead of Http11NioProtocol for better performance */
         factory.setProtocol("org.apache.coyote.http11.Http11Nio2Protocol");
         factory.setContextPath(contextPath);
         factory.setPort(port);
         System.out.println("################## Init Tomcat Config Successfully ##################");
         return factory;
     }
-    
 }
