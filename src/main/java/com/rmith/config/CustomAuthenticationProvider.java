@@ -15,7 +15,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  */
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
+    //<editor-fold defaultstate="collapsed" desc="INIT">
     UserDetailsService userDetailService;
+    //</editor-fold>
 
     @Override
     public Authentication authenticate(Authentication a) throws AuthenticationException {

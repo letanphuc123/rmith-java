@@ -214,47 +214,6 @@ public class AccountController {
     }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="RESEND ACTIVE EMAIL">
-    @PostMapping("/resend-active-email")
-    public String reSendActiveEmail(
-            HttpSession session,
-            RedirectAttributes redirectAttrs,
-            @RequestParam(name = "emailVerify", required = false, defaultValue = "") String emailVerify,
-            @RequestParam(name = "redirect", required = false, defaultValue = "") String redirect) {
-        if (session.getAttribute("emailActivate") == null && redirect.equals("login")) {
-            return "redirect:/login";
-        }
-        switch (redirect) {
-            case "login":
-                String email = session.getAttribute("emailActivate").toString();
-                if (accountService.resendActiveEmail(email).equals(Constant.SUCCESS)) {
-                    redirectAttrs.addFlashAttribute("resendSuccess", true);
-                    break;
-                }
-                redirectAttrs.addFlashAttribute("resendError", true);
-                break;
-            case "accounts":
-                if (accountService.resendActiveEmail(emailVerify).equals(Constant.SUCCESS)) {
-                    redirectAttrs.addFlashAttribute("resendSuccess", true);
-                    break;
-                }
-                redirectAttrs.addFlashAttribute("resendError", true);
-                break;
-            case "ChangeNewEmail":
-                redirect = "accounts";
-                if (accountService.resendActiveChangeEmail(emailVerify).equals(Constant.SUCCESS)) {
-                    redirectAttrs.addFlashAttribute("resendChangeSuccess", true);
-                    break;
-                }
-                redirectAttrs.addFlashAttribute("resendError", true);
-                break;
-            default:
-                redirectAttrs.addFlashAttribute("resendError", true);
-                break;
-        }
-        return "redirect:/" + redirect;
-    }
-    //</editor-fold>
 
     /* 3: Group user */
     //<editor-fold defaultstate="collapsed" desc="GROUP USER">

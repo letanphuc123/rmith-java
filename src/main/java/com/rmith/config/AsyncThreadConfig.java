@@ -16,13 +16,14 @@ import org.springframework.context.annotation.Configuration;
 /**
  *
  * @author Le Tan Phuc
- 
  */
 @Configuration
 public class AsyncThreadConfig implements DisposableBean {
 
+    //<editor-fold defaultstate="collapsed" desc="INIT">
     public static volatile ExecutorService executorPool = null;
-    private static final Logger LOGGER = LogManager.getLogger("error_config");
+    private static final Logger LOGGER = LogManager.getLogger("error_config"); 
+    //</editor-fold>
 
     /**
      *

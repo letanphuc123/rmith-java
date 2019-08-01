@@ -12,7 +12,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 /**
  *
  * @author Le Tan Phuc
- 
  */
 public class AccessDeniedExceptionHandler implements AccessDeniedHandler {
 

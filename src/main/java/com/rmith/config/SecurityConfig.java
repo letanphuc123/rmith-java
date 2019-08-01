@@ -18,7 +18,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 /**
  *
  * @author Le Tan Phuc
- 
  */
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -43,17 +42,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/delete-account" //Event when delete account
                 ).hasAnyRole("admin", "accounts")
                 /**
-                 * Package function security
-                 */
-                .antMatchers(
-                        "/packages", //Open package screen
-                        "/add-package", //Event add new package
-                        "/update-package", //Event update package information
-                        "/delete-package", //Event delete package
-                        "/get-limit-package", //Event get list limit for each package when click to button Limit
-                        "/update-limit-package" //Event update limit information for package
-                ).hasAnyRole("admin", "packages")
-                /**
                  * Group user function security
                  */
                 .antMatchers(
@@ -73,69 +61,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/delete-module" //Event delete module
                 ).hasAnyRole("admin", "modules")
                 /**
-                 * Monitor used function security
-                 */
-                .antMatchers(
-                        "/monitor-used", //Open monitor used screen
-                        "/get-list-monitor-used-by-account" //Get information monitor used
-                ).hasAnyRole("admin", "monitor-used")
-                /**
-                 * Google place type function security
-                 */
-                .antMatchers(
-                        "/google-place-type", //Open google place type screen
-                        "/modify-google-place-type", //Update google place type information
-                        "/delete-google-place-type" //Delete google place type
-                ).hasAnyRole("admin", "google-place-type")
-                /**
-                 * Proxy function security
-                 */
-                .antMatchers(
-                        "/proxy", //Open proxy screen
-                        "/add-proxy", //Add new proxy
-                        "/import-proxy" //Import proxy information from database
-                ).hasAnyRole("admin", "proxy")
-                /**
-                 * Notification manager function security
-                 */
-                .antMatchers(
-                        "/notification-manager", //Open notification manager screen
-                        "/change-notification-active", //Event change status active notification
-                        "/save-notification", //Event save notification
-                        "/delete-notification", //Event delete notification
-                        "/notification-making",
-                        "/notification-review"
-                ).hasAnyRole("admin", "notification-manager")
-                /**
-                 * Manage billing function security
-                 */
-                .antMatchers(
-                        "/customer-billing", //Open customer billing screen
-                        "/billing", //Open billing screen by payment id
-                        "/modify-billing", //Event update billing information
-                        "/delete-billing" //Event delete billing information,
-                ).hasAnyRole("admin", "manage-billing")
-                /**
-                 * Manage plan function security
-                 */
-                .antMatchers(
-                        "/plan", //Open plan screen
-                        "/add-plan", //Open add plan screen
-                        "/update-plan", //Open update plan screen
-                        "/modify-plan", //Event add/update plan information
-                        "/delete-plan" //Event delete plan
-                ).hasAnyRole("admin", "plan")
-                /**
-                 * Payment function security
-                 */
-                .antMatchers(
-                        "/payment", //Open payment screen
-                        "/add-payment", //Open add payment screen
-                        "/update-payment", //Open update payment screen by payment id
-                        "/modify-payment", //Event update payment information
-                        "/delete-payment" //Event delete payment information,
-                ).hasAnyRole("admin", "payment")
-                /**
                  * Category function security
                  */
                 .antMatchers(
@@ -145,65 +70,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/delete-category" //Event delete category
                 ).hasAnyRole("admin", "categories")
                 /**
-                 * Language function security
-                 */
-                .antMatchers(
-                        "/languages", //Open language screen
-                        "/load-language-function", //Event load language data
-                        "/update-language-function" //Event update language information
-                ).hasAnyRole("admin", "languages")
-                /**
-                 * Monitor API function security
-                 */
-                .antMatchers(
-                        "/monitor-api", //Open monitor screen
-                        "/column-chart-monitor-api", //Event load data for chart
-                        "/detail-monitor-api" //Event load data monitor for table
-                ).hasAnyRole("admin", "monitor-api")
-                /**
-                 * Log function security
-                 */
-                .antMatchers(
-                        "/logs", //Open log screen
-                        "/detail-file-log", //Event load log detail
-                        "/set-cookie-filter-log", //Event set cookie when filter
-                        "/download-file-log" //Event download file log
-                ).hasAnyRole("admin", "logs")
-                /**
-                 * Agency approve function security
-                 */
-                .antMatchers(
-                        "/agency-approve", //Open agency approve
-                        "/approve-agency", //Event approve for agency request
-                        "/deny-approve-agency", //Event deny for agency request
-                        "/cancel-approve-agency", //Event cancel for agency request
-                        "/agency-detail" //Event view agency detail information
-                ).hasAnyRole("admin", "agency-approve")
-                /**
-                 * Set cookie date event security
-                 */
-                .antMatchers(
-                        "/set-cookie-date"
-                ).hasAnyRole("admin", "monitor-api", "monitor-used")
-                /**
                  * All event security after login application
                  */
                 .antMatchers(
-                        "/notifications",
-                        "/update-seen-notification",
-                        "/payment",
-                        "/update-language-header",
-                        "/billing",
                         "/profile",
                         "/update-profile",
                         "/update-password",
-                        "/contact-us",
-                        "/privacy-policy",
-                        "/term-of-service",
-                        "/release-version",
                         "/sign-out"
                 ).hasAnyRole("admin", "logged")
-                .antMatchers("/citations").hasAnyRole("admin", "citations")
                 .and()
                 .formLogin()
                 .loginPage("/login");
@@ -213,17 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/login",
                 "/check-login",
                 "/forgot-password",
-                "/send-forgot-password",
-                "/resend-active-email", //Event when click to button to resend email active 
-                "/active-account",
-                "/active-add-new-account",
-                "/active-confirm-add-new-email",
-                "/active-new-email",
-                "/active-confirm-new-email",
-                "/active-or-account",
-                "/active-organization-account",
-                "/reset-password",
-                "/update-resetting-password").permitAll();
+                "/send-forgot-password").permitAll();
 
         /* all request need to be authenticate (login) execept listed requests above */
         http.authorizeRequests().anyRequest().authenticated();
